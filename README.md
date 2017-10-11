@@ -1,4 +1,4 @@
-# GLPi API Client Library for PHP
+# GLPI API Client Library for PHP
 
 ![Flyve MDM banner](https://user-images.githubusercontent.com/663460/26935464-54267e9c-4c6c-11e7-86df-8cfa6658133e.png)
 
@@ -93,4 +93,3 @@ guidelines for [contributing](./CONTRIBUTING.md) and then check out one of our i
 * **Code**: you can redistribute it and/or modify
     it under the terms of the GNU General Public License ([GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)).
 * **Documentation**: released under Attribution 4.0 International ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)).
-
