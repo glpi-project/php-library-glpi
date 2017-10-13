@@ -6,6 +6,8 @@ use GuzzleHttp\Client as HttpClient;
 use Exception;
 use GlpiProject\API\Rest\Exception\BadEndpointException;
 use GlpiProject\API\Rest\Exception\InsufficientArgumentsException;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * @method Alert(string $method, array $input, array $params = [])
@@ -300,6 +302,58 @@ class Client {
       $params['body'] = json_encode(['input' => $input]);
       $params['headers'] = $this->addTokens();
       return $this->doHttpRequest($method, $name, $params);
+   }
+
+   /**
+    * Prepare and send a request to the GLPI Api.
+    *
+    * @param $method
+    * @param $uri
+    * @param array $options
+    * @return mixed|null|\Psr\Http\Message\ResponseInterface
+    * @throws Exception
+    */
+   public function request($method, $uri, array $options = []) {
+      $apiToken = $this->addTokens();
+      try {
+         if ($apiToken) {
+            $sessionHeaders = ['Session-Token' => $apiToken['Session-Token']];
+            if (key_exists('App-Token', $apiToken)) {
+               $sessionHeaders['App-Token'] = $apiToken['App-Token'];
+            }
+            $options = array_merge_recursive($options, ['headers' => $sessionHeaders]);
+         }
+         $response = $this->httpClient->request($method, $uri, $options);
+         return $response;
+      } catch (ClientException $e) {
+         $response = $e->getResponse();
+         /*$body = $response->getBody()->getContents();
+         $reasonPhrase = $response->getReasonPhrase() . (($body) ? ' ' . $body : '');*/
+         return $response;
+      } catch (RequestException $e) {
+         $hasResponse = $e->hasResponse();
+         $statusCode = ($hasResponse) ? $e->getResponse()->getStatusCode() : '500';
+         $contents = ($hasResponse) ? $e->getResponse()->getReasonPhrase() : 'Request Error';
+         throw new Exception($contents, $statusCode);
+      }
+   }
+
+   /**
+    * Return the current php $_SESSION.
+    * @return array
+    */
+   public function getFullSession() {
+      $response = $this->request('get', 'getFullSession');
+      return ['statusCode' => $response->getStatusCode(), 'body' => json_decode($response->getBody()->getContents())];
+   }
+
+   /**
+    * Return the current $CFG_GLPI.
+    * @return array
+    */
+   public function getGlpiConfig() {
+      $response = $this->request('get', 'getFullSession');
+      return ['statusCode' => $response->getStatusCode(), 'body' => json_decode($response->getBody()->getContents())];
    }
 
    /**
