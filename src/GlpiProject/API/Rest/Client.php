@@ -1,5 +1,7 @@
 <?php
+
 namespace GlpiProject\API\Rest;
+
 use GuzzleHttp\Client as HttpClient;
 use Exception;
 use GlpiProject\API\Rest\Exception\BadEndpointException;
@@ -216,8 +218,8 @@ class Client {
       'DeviceSoundCardModel',
    ];
 
-   public function __construct(HttpClient $httpClient, $url) {
-      $this->httpClient = $httpClient;
+   public function __construct($url) {
+      $this->httpClient = new HttpClient();
       $this->url = trim($url, '/') . '/';
    }
 
@@ -240,7 +242,7 @@ class Client {
    public function initSessionByCredentials($user, $password) {
       $response = $this->doHttpRequest('get', 'initSession', ['auth' => [$user, $password]]);
       if ($response->getStatusCode() != 200
-          || !$this->sessionToken = json_decode( (string) $response->getBody(), true)['session_token']) {
+         || !$this->sessionToken = json_decode($response->getBody()->getContents(), true)['session_token']) {
          throw new Exception("Cannot connect to api");
       }
       return true;
@@ -258,7 +260,7 @@ class Client {
    public function initSessionByUserToken($userToken) {
       $response = $this->doHttpRequest('get', 'initSession', ['Authorization' => "user_token $userToken"]);
       if ($response->getStatusCode() != 200
-          || !$this->sessionToken = json_decode( (string) $response->getBody(), true)['session_token']) {
+         || !$this->sessionToken = json_decode($response->getBody()->getContents(), true)['session_token']) {
          throw new Exception("Cannot connect to api");
       }
       return true;
@@ -310,7 +312,7 @@ class Client {
       if (in_array($verb, ['get', 'post', 'delete', 'put', 'options', 'patch'])) {
          try {
             return $this->httpClient->{$verb}($this->url . $relative_uri,
-            $params);
+               $params);
          } catch (Exception $e) {
             throw $e;
          }
