@@ -266,6 +266,20 @@ class Client {
       return true;
    }
 
+   /**
+    * Kill client session.
+    * @return bool
+    * @throws Exception
+    */
+   public function killSession() {
+      $params['headers'] = $this->addTokens();
+      $response = $this->doHttpRequest('get', 'killSession', $params);
+      if (!$response->getStatusCode() != 200) {
+         throw new Exception('session_token seems invalid');
+      }
+      return true;
+   }
+
    public function getSimpleEndpoints() {
       return $this->simpleEndpoints;
    }
