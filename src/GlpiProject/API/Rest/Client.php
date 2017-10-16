@@ -242,7 +242,7 @@ class Client {
     * @return boolean
     */
    public function initSessionByCredentials($user, $password) {
-      $response = $this->doHttpRequest('get', 'initSession', ['auth' => [$user, $password]]);
+      $response = $this->request('get', 'initSession', ['auth' => [$user, $password]]);
       if ($response->getStatusCode() != 200
          || !$this->sessionToken = json_decode($response->getBody()->getContents(), true)['session_token']) {
          throw new Exception("Cannot connect to api");
@@ -260,7 +260,7 @@ class Client {
     * @return boolean True if success
     */
    public function initSessionByUserToken($userToken) {
-      $response = $this->doHttpRequest('get', 'initSession', ['Authorization' => "user_token $userToken"]);
+      $response = $this->request('get', 'initSession', ['Authorization' => "user_token $userToken"]);
       if ($response->getStatusCode() != 200
          || !$this->sessionToken = json_decode($response->getBody()->getContents(), true)['session_token']) {
          throw new Exception("Cannot connect to api");
@@ -274,8 +274,7 @@ class Client {
     * @throws Exception
     */
    public function killSession() {
-      $params['headers'] = $this->addTokens();
-      $response = $this->doHttpRequest('get', 'killSession', $params);
+      $response = $this->request('get', 'killSession');
       if (!$response->getStatusCode() != 200) {
          throw new Exception('session_token seems invalid');
       }
@@ -316,6 +315,9 @@ class Client {
    public function request($method, $uri, array $options = []) {
       $apiToken = $this->addTokens();
       try {
+         if (!empty($uri)) {
+            $options['headers']['Content-Type'] = "application/json";
+         }
          if ($apiToken) {
             $sessionHeaders = ['Session-Token' => $apiToken['Session-Token']];
             if (key_exists('App-Token', $apiToken)) {
@@ -323,7 +325,7 @@ class Client {
             }
             $options = array_merge_recursive($options, ['headers' => $sessionHeaders]);
          }
-         $response = $this->httpClient->request($method, $uri, $options);
+         $response = $this->httpClient->request($method, $this->url.$uri, $options);
          return $response;
       } catch (ClientException $e) {
          $response = $e->getResponse();
@@ -344,7 +346,7 @@ class Client {
     */
    public function getFullSession() {
       $response = $this->request('get', 'getFullSession');
-      return ['statusCode' => $response->getStatusCode(), 'body' => json_decode($response->getBody()->getContents())];
+      return ['statusCode' => $response->getStatusCode(), 'body' => $response->getBody()->getContents()];
    }
 
    /**
@@ -353,7 +355,7 @@ class Client {
     */
    public function getGlpiConfig() {
       $response = $this->request('get', 'getFullSession');
-      return ['statusCode' => $response->getStatusCode(), 'body' => json_decode($response->getBody()->getContents())];
+      return ['statusCode' => $response->getStatusCode(), 'body' => $response->getBody()->getContents()];
    }
 
    /**
