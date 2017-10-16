@@ -56,10 +56,9 @@ It's easy to implement, as you see in the following example:
 
 ```php
 use GlpiProject\API\Rest\Client;
-use GuzzleHttp\Client as HttpClient;
 
 // Instanciate the API client
-$client = new Client(new HttpClient(), 'http://localhost/glpi/apirest.php/');
+$client = new Client('http://localhost/glpi/apirest.php/');
 
 // Authenticate
 if (!$client->initSessionByCredentials('glpi', 'glpi')) {
