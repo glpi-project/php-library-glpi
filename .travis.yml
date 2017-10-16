@@ -1,0 +1,37 @@
+language: php
+env:
+  global:
+    - GLPI_SOURCE="https://github.com/glpi-project/glpi -b 9.2/bugfixes" 
+#    - secure: Y9sG3lZ3Fn3t5BXvcMJQxWsdSUVQgF4M08E6oouYrRc95HEj3ZwZOqp6Df58u8CQFA0EKJyvCBLn8UicvHGMKAD0RwGLBdSP4Ji9gJRZkyMZi79awSshdva/c8dqVQrRd4asuTNQfcagVJpNDnY8sYusw504JUilK3vFVp+39nNZUkcvT69NGVIlXzgHTYinBkVuqDhf5eVtcLcaESLEshrg+5ZERdm+0KifdJVREzhicJxofnmTl/wBsIP7XiQqspljf2/SxLqreGmWXYXUfqIwIOVtsd9fkZChQCz8USC7P427tH6styRDYuMCtvA9b/T/XacSdKFbuDezff3NbIM3b5BebDyCrOK5MGSOdRUY5RuyZN4R5LjePUE++9QNCUPeDSkfb23v0VfuqXIRAxfdtik517GzFy6O7/e6FU1msVZlGQED7Uek9nqnupj+0lIq+99Jcm1UCNJu1NTL2Tv80XXqySaxyE4Sedq/FiYAsy1bo2cg2367I2b4FhFXaJCKkFHcdjHXAeurkRy/brSPhBNoOO5/GA3RepUErgly4P8TLZqHNZv8rgMUoQ88sdwDyXG7dY4UwWiTlCkxMBTqBqJanlTMA9zn2bYyMDioTGnA7+VYAA8cddjFOMVrmmuFJ+YV2x1+5B5qd+Wt8RPwcPQDyqaiN5amb1HGeMA=
+
+before_script:
+  - mysql -u root -e 'create database glpitest;'
+  - phpenv config-rm xdebug.ini || true
+  - rm -f composer.lock
+#  - tests/config-composer.sh
+  - git clone --depth=1 $GLPI_SOURCE ../glpi && cd ../glpi
+  - composer install --no-dev --no-interaction
+  - php tools/cliinstall.php --db=glpitest --user=root --tests
+  - cd ../composer-package-glpi && composer install --no-interaction
+
+script:
+  - vendor/bin/atoum --debug -bf tests/bootstrap.php -no-cc --max-children-number 1 -d tests/unit
+  - if [[ "$CS" == "true" ]]; then vendor/bin/phpcs -p --standard=vendor/glpi-project/coding-standard/GlpiStandard/ *.php install/ inc/ front/ ajax/ tests/; fi
+
+matrix:
+  include:
+    - php: 5.6
+    - php: 7.0
+    - php: 7.1
+    - php: 7.2
+      env: CS=true
+    - php: nightly
+  allow_failures:
+    - php: nightly
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+    
+#notifications:
+#  webhooks: https://hooks.aethonan.pro/travisci/-1001061475099/
