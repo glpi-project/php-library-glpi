@@ -25,7 +25,15 @@ To get started, check out [Flyve MDM website](https://flyve-mdm.com/)!
 
 ## Synopsis
 
-GLPI API Client Library for PHP provides functionality common to all GLPI APIs, for example HTTP transport, error handling, authentication, JSON parsing, media download/upload and batching.
+This library specifically designed for PHP, features several functionalities common to all GLPI APIs, for example:
+
+- HTTP transport to APIs
+- Error handling 
+- Authentication
+- JSON parsing
+- Batching
+
+You will be able to call to all the methods that belong to the [GLPI REST API](https://dev.flyve.org/glpi/apirest.php), for more information visit the [projects website](http://flyve.org/composer-package-glpi/).
 
 This project is a **work in progress**. The information here provided could change at any given time.
 
@@ -43,7 +51,7 @@ composer require glpi-project/rest-api-client
 
 ## Code examples
 
-It's easy to implement in your code, as you see in the following example:
+It's easy to implement, as you see in the following example:
 
 ```php
 use GlpiProject\API\Rest\Client;
