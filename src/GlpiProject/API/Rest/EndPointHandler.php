@@ -4,9 +4,6 @@
 namespace GlpiProject\API\Rest;
 
 
-
-use GlpiProject\API\Rest\Exception\InsufficientArgumentsException;
-
 class EndPointHandler
 {
 
@@ -25,7 +22,10 @@ class EndPointHandler
     */
    public function getMyProfiles() {
       $response = $this->client->request('get', 'getMyProfiles');
-      return ['statusCode' => $response->getStatusCode(), 'body' => json_decode($response->getBody()->getContents())];
+      return [
+         'statusCode' => $response->getStatusCode(),
+         'body' => $response->getBody()->getContents(),
+      ];
    }
 
    /**
@@ -34,7 +34,10 @@ class EndPointHandler
     */
    public function getActiveProfile() {
       $response = $this->client->request('get', 'getActiveProfile');
-      return ['statusCode' => $response->getStatusCode(), 'body' => json_decode($response->getBody()->getContents())];
+      return [
+         'statusCode' => $response->getStatusCode(),
+         'body' => $response->getBody()->getContents(),
+      ];
    }
 
    /**
@@ -45,9 +48,12 @@ class EndPointHandler
     * @return array
     */
    public function changeActiveProfile($profiles_id) {
-      $options['body'] = json_encode(['profiles_id' => $profiles_id]);
+      $options['body'] = ['profiles_id' => $profiles_id];
       $response = $this->client->request('post', 'changeActiveProfile', $options);
-      return ['statusCode' => $response->getStatusCode(), 'body' => json_decode($response->getBody()->getContents())];
+      return [
+         'statusCode' => $response->getStatusCode(),
+         'body' => $response->getBody()->getContents(),
+      ];
    }
 
    /**
@@ -55,9 +61,12 @@ class EndPointHandler
     * @param array $options
     * @return array
     */
-   public function getMyEntities(array $options = array()) {
+   public function getMyEntities(array $options = []) {
       $response = $this->client->request('get', 'getMyEntities', $options);
-      return ['statusCode' => $response->getStatusCode(), 'body' => json_decode($response->getBody()->getContents())];
+      return [
+         'statusCode' => $response->getStatusCode(),
+         'body' => $response->getBody()->getContents(),
+      ];
    }
 
    /**
@@ -66,7 +75,10 @@ class EndPointHandler
     */
    public function getActiveEntities() {
       $response = $this->client->request('get', 'getActiveEntities');
-      return ['statusCode' => $response->getStatusCode(), 'body' => json_decode($response->getBody()->getContents())];
+      return [
+         'statusCode' => $response->getStatusCode(),
+         'body' => $response->getBody()->getContents(),
+      ];
    }
 
    /**
@@ -76,9 +88,12 @@ class EndPointHandler
     * @param array $options
     * @return array
     */
-   public function changeActiveEntities(array $options = array()) {
+   public function changeActiveEntities(array $options = []) {
       $response = $this->client->request('post', 'changeActiveEntities', $options);
-      return ['statusCode' => $response->getStatusCode(), 'body' => json_decode($response->getBody()->getContents())];
+      return [
+         'statusCode' => $response->getStatusCode(),
+         'body' => $response->getBody()->getContents(),
+      ];
    }
 
 
