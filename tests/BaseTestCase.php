@@ -47,7 +47,7 @@ class BaseTestCase extends atoum {
     */
    protected function assertJsonResponse($response, $statusCode = 200) {
       $this->array($response)->integer['statusCode']->isEqualTo($statusCode);
-      if (key_exists('body',$response) && $response['body']) {
+      if (key_exists('body', $response) && $response['body']) {
          $this->json($response['body']);
       }
    }
