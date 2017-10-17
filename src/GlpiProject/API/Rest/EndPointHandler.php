@@ -48,7 +48,7 @@ class EndPointHandler
     * @return array
     */
    public function changeActiveProfile($profiles_id) {
-      $options['body'] = ['profiles_id' => $profiles_id];
+      $options['body'] = json_encode(['profiles_id' => $profiles_id]);
       $response = $this->client->request('post', 'changeActiveProfile', $options);
       return [
          'statusCode' => $response->getStatusCode(),
