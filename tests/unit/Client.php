@@ -2,49 +2,44 @@
 
 namespace GlpiProject\API\Rest\tests\units;
 
-use atoum;
+use GlpiProject\API\Rest\tests\BaseTestCase;
 
-class Client extends atoum {
+/**
+ * @engine inline
+ */
+class Client extends BaseTestCase {
 
-   /**
-    * @engine inline
-    */
    public function testInitSession() {
       $client = $this->newTestedInstance(GLPI_URL);
 
       // Test invalid credentials
-      $this->exception(function() use ($client) {
+      $this->exception(function () use ($client) {
          $client->initSessionByCredentials('glpi', 'bad password');
-      })->isInstanceOf(\GuzzleHttp\Exception\ClientException::class);
+      })->isIdenticalTo($this->exception);
 
       // Test valid credentials
       $success = $client->initSessionByCredentials('glpi', 'glpi');
       $this->boolean($success)->isTrue();
+
+      // Test invalid credentials for user token
+      $this->exception(function () use ($client){
+         $client->initSessionByUserToken('loremIpsum');
+      })->isIdenticalTo($this->exception);
    }
 
-   /**
-    * @engine inline
-    */
-   public function testComputer() {
+   /*public function testComputer() {
       $client = $this->newTestedInstance(GLPI_URL);
       $this->boolean($client->initSessionByCredentials('glpi', 'glpi'))->isTrue();
 
       $response = $client->computer('post', ['name' => 'computer 0001']);
       $this->object($response)->isInstanceOf(\Psr\Http\Message\ResponseInterface::class);
-   }
+   }*/
 
-   /**
-    * @engine inline
-    * @tags testGetFullSession
-    */
    public function testGetFullSession() {
-      $client = $this->newTestedInstance(GLPI_URL);
-      $client->initSessionByCredentials('glpi', 'glpi');
+      $this->loginSuperAdmin();
+      $response = $this->client->getFullSession();
+      $this->assertJsonResponse($response);
 
-      $response = $client->getFullSession();
-      $this->array($response)
-         ->integer['statusCode']->isEqualTo(200)
-         ->string['body']->isNotEmpty()->given($json = $response['body'])->then->json($json);
    }
 
 }
