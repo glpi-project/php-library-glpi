@@ -24,7 +24,8 @@
   "require-dev": {
     "atoum/atoum": "^3.1",
     "atoum/stubs": "^2.5",
-    "atoum/json-schema-extension": "^2.1"
+    "atoum/json-schema-extension": "^2.1",
+    "glpi-project/tools": "^0.1.2"
   },
   "autoload": {
     "psr-4": {
@@ -39,5 +40,7 @@
   },
   "config": {
     "optimize-autoloader": true
-  }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
