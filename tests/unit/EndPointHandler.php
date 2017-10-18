@@ -49,8 +49,8 @@ class EndPointHandler extends BaseTestCase {
     * @tags testGetMyProfiles
     */
    public function testGetMyProfiles() {
-      $this->given($this->newTestedInstance($this->client))->then
-         ->array($response = $this->testedInstance->getMyProfiles());
+      $this->newTestedInstance($this->client);
+      $response = $this->testedInstance->getMyProfiles();
       $this->assertJsonResponse($response);
    }
 
@@ -58,8 +58,8 @@ class EndPointHandler extends BaseTestCase {
     * @tags testGetActiveProfile
     */
    public function testGetActiveProfile() {
-      $this->given($this->newTestedInstance($this->client))->then
-         ->array($response = $this->testedInstance->getActiveProfile());
+      $this->newTestedInstance($this->client);
+      $response = $this->testedInstance->getActiveProfile();
       $this->assertJsonResponse($response);
    }
 
@@ -68,14 +68,15 @@ class EndPointHandler extends BaseTestCase {
     */
    public function testChangeActiveProfile() {
       $this->newTestedInstance($this->client);
-      $currentProfile = json_decode($this->testedInstance->getActiveProfile()['body']);
+      $response = $this->testedInstance->getActiveProfile();
+      $currentProfile = json_decode($response['body']);
 
       // assert current profile with id
-      $this->array($response = $this->testedInstance->changeActiveProfile($currentProfile->active_profile->id));
+      $response = $this->testedInstance->changeActiveProfile($currentProfile->active_profile->id);
       $this->assertJsonResponse($response);
 
       // assert invalid profile
-      $this->array($response = $this->testedInstance->changeActiveProfile(-1));
+      $response = $this->testedInstance->changeActiveProfile(-1);
       $this->assertJsonResponse($response, parent::HTTP_NOT_FOUND);
    }
 
@@ -83,7 +84,7 @@ class EndPointHandler extends BaseTestCase {
     * @tags testGetMyEntities
     */
    public function testGetMyEntities() {
-      $this->given($this->newTestedInstance($this->client));
+      $this->newTestedInstance($this->client);
       $response = $this->testedInstance->getMyEntities();
       $this->assertJsonResponse($response);
 
@@ -101,8 +102,8 @@ class EndPointHandler extends BaseTestCase {
     * @tags testGetActiveEntities
     */
    public function testGetActiveEntities() {
-      $this->given($this->newTestedInstance($this->client))
-         ->array($response = $this->testedInstance->getActiveEntities());
+      $this->newTestedInstance($this->client);
+      $response = $this->testedInstance->getActiveEntities();
       $this->assertJsonResponse($response);
 
       // The returned json has to had this key(s)
@@ -118,28 +119,40 @@ class EndPointHandler extends BaseTestCase {
     * @tags testGetActiveEntities
     */
    public function testChangeActiveEntities() {
-      $this->given($this->newTestedInstance($this->client));
+      $this->newTestedInstance($this->client);
+
       // check with no params (default behavior)
-      $this->array($response = $this->testedInstance->changeActiveEntities())
+      $response = $this->testedInstance->changeActiveEntities();
+      $this->array($response)
          ->integer['statusCode']->isEqualTo(parent::HTTP_OK)
          ->string['body']->isEqualTo('true');
 
       // check for invalid entity param
-      $this->array($response = $this->testedInstance->changeActiveEntities(['entities_id'=> -1]))
+      $response = $this->testedInstance->changeActiveEntities(['entities_id' => -1]);
+      $this->array($response)
          ->integer['statusCode']->isEqualTo(parent::HTTP_OK)
          ->string['body']->isEqualTo('false');
 
       // check for invalid recursive param
-      $this->array($response = $this->testedInstance->changeActiveEntities(['is_recursive'=> "lorem"]))
+      $response = $this->testedInstance->changeActiveEntities(['is_recursive' => "lorem"]);
+      $this->array($response)
          ->integer['statusCode']->isEqualTo(parent::HTTP_OK)
          ->string['body']->isEqualTo('true'); // this could be a bug from glpi.
 
-      $this->array($response = $this->testedInstance->changeActiveEntities(['entities_id'=> 0, 'is_recursive'=> "lorem"]))
+      $response = $this->testedInstance->changeActiveEntities([
+         'entities_id' => 0,
+         'is_recursive' => "lorem",
+      ]);
+      $this->array($response)
          ->integer['statusCode']->isEqualTo(parent::HTTP_OK)
          ->string['body']->isEqualTo('true');
 
       // check for valid params with different default values
-      $this->array($response = $this->testedInstance->changeActiveEntities(['entities_id'=> 0, 'is_recursive'=> true]))
+      $response = $this->testedInstance->changeActiveEntities([
+         'entities_id' => 0,
+         'is_recursive' => true,
+      ]);
+      $this->array($response)
          ->integer['statusCode']->isEqualTo(parent::HTTP_OK)
          ->string['body']->isEqualTo('true');
    }
