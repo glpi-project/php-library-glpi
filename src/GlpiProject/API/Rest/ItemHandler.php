@@ -31,8 +31,7 @@
 namespace GlpiProject\API\Rest;
 
 
-class ItemHandler
-{
+class ItemHandler {
    /**
     * @var Client
     */
@@ -50,7 +49,11 @@ class ItemHandler
     * @return array
     */
    public function getAnItem($itemType, $id, array $queryString = []) {
-      $response = $this->client->request('get', $itemType . '/' . $id, $queryString);
+      $options = [];
+      if ($queryString) {
+         $options['query'] = $queryString;
+      }
+      $response = $this->client->request('get', $itemType . '/' . $id, $options);
       return [
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
@@ -58,21 +61,27 @@ class ItemHandler
    }
 
    /**
-    *  Return a collection of rows of the itemtype.
+    * Return a collection of rows of the itemtype.
     * @param $itemType
     * @param array $queryString
     * @return array
     */
    public function getAllItems($itemType, array $queryString = []) {
-      $response = $this->client->request('get', $itemType . '/', $queryString);
+      $options = [];
+      if ($queryString) {
+         $options['query'] = $queryString;
+      }
+      $response = $this->client->request('get', $itemType . '/', $options);
       return [
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
+         'contentRange' => $response->getHeader('Content-Range')[0],
+         'acceptRange' => $response->getHeader('Accept-Range')[0],
       ];
    }
 
    /**
-    *  Return a collection of rows of the itemtype.
+    * Return a collection of rows of the itemtype.
     * @param $itemType
     * @param $id
     * @param $subItem
@@ -80,11 +89,17 @@ class ItemHandler
     * @return array
     */
    public function getSubItems($itemType, $id, $subItem, array $queryString = []) {
+      $options = [];
+      if ($queryString) {
+         $options['query'] = $queryString;
+      }
       $response = $this->client->request('get', $itemType . '/' . $id . '/' . $subItem,
-         $queryString);
+         $options);
       return [
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
+         'contentRange' => $response->getHeader('Content-Range')[0],
+         'acceptRange' => $response->getHeader('Accept-Range')[0],
       ];
    }
 
@@ -93,11 +108,12 @@ class ItemHandler
     * @param array $queryString
     * @return array
     */
-   public function getMultipleItems(array $queryString = []) {
-      $response = $this->client->request('get', 'getMultipleItems', $queryString);
+   public function getMultipleItems(array $queryString){
+      $options['query'] = $queryString;
+      $response = $this->client->request('get', 'getMultipleItems', $options);
       return [
          'statusCode' => $response->getStatusCode(),
-         'body' => $response->getBody()->getContents(),
+         'body' => $response->getBody()->getContents()
       ];
    }
 
@@ -108,7 +124,11 @@ class ItemHandler
     * @return array
     */
    public function listSearchOptions($itemType, array $queryString = []) {
-      $response = $this->client->request('get', 'listSearchOptions/' . $itemType, $queryString);
+      $options = [];
+      if ($queryString) {
+         $options['query'] = $queryString;
+      }
+      $response = $this->client->request('get', 'listSearchOptions/' . $itemType, $options);
       return [
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
@@ -122,7 +142,11 @@ class ItemHandler
     * @return array
     */
    public function searchItems($itemType, array $queryString = []) {
-      $response = $this->client->request('get', 'search/' . $itemType, $queryString);
+      $options = [];
+      if ($queryString) {
+         $options['query'] = $queryString;
+      }
+      $response = $this->client->request('get', 'search/' . $itemType, $options);
       return [
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
@@ -140,12 +164,14 @@ class ItemHandler
     * @param array $queryString
     * @return array
     */
-   public function addItem($itemType, array $queryString = []) {
-      $queryString['input'] = $queryString;
-      $response = $this->client->request('post', $itemType . '/', $queryString);
+   public function addItem($itemType, array $queryString) {
+      $options['body'] = json_encode(['input' => $queryString]);
+      $response = $this->client->request('post', $itemType . '/', $options);
       return [
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
+         'location' => $response->getHeader('location')[0],
+         'link' => $response->getHeader('Link')[0],
       ];
    }
 
@@ -156,18 +182,27 @@ class ItemHandler
     * @param array $queryString
     * @return array
     */
-   public function updateItem($itemType, $id, array $queryString = []) {
-      $queryString['input'] = $queryString;
-      $response = $this->client->request('put', $itemType . '/' . $id, $queryString);
+   public function updateItem($itemType, $id, array $queryString) {
+      $options['body'] = json_encode(['input' => $queryString]);
+      $response = $this->client->request('put', $itemType . '/' . $id, $options);
       return [
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
       ];
    }
 
+   /**
+    * @param $itemType
+    * @param $id
+    * @param array $queryString
+    * @return array
+    */
    public function deleteItem($itemType, $id, array $queryString = []) {
-      $queryString['input'] = $queryString;
-      $response = $this->client->request('delete', $itemType . '/' . $id, $queryString);
+      $options = [];
+      if($queryString){
+         $options['body'] = json_encode(['input' => $queryString]);
+      }
+      $response = $this->client->request('delete', $itemType . '/' . $id, $options);
       return [
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
