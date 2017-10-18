@@ -58,10 +58,11 @@ class EndPointHandler
 
    /**
     * Return all the possible entities of the current logged user (and for current active profile).
-    * @param array $options
+    * @param array $queryString
     * @return array
     */
-   public function getMyEntities(array $options = []) {
+   public function getMyEntities(array $queryString = []) {
+      $options['query'] = $queryString;
       $response = $this->client->request('get', 'getMyEntities', $options);
       return [
          'statusCode' => $response->getStatusCode(),
@@ -85,10 +86,14 @@ class EndPointHandler
     * Change active entity to the entities_id one.
     * @see getMyEntities endpoint for possible entities.
     *
-    * @param array $options
+    * @param array $parameters
     * @return array
     */
-   public function changeActiveEntities(array $options = []) {
+   public function changeActiveEntities(array $parameters = []) {
+      $options = [];
+      if($parameters){
+         $options['body'] = json_encode($parameters);
+      }
       $response = $this->client->request('post', 'changeActiveEntities', $options);
       return [
          'statusCode' => $response->getStatusCode(),
