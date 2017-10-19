@@ -149,6 +149,9 @@ class Client {
    /** @var string Session token obtained after initSession() */
    private $sessionToken = null;
 
+   /**
+    * @deprecated this could be moved to ItemHandler
+    */
    private $simpleEndpoints = [
       'Alert',
       'APIClient',
@@ -303,16 +306,25 @@ class Client {
     */
    public function killSession() {
       $response = $this->request('get', 'killSession');
-      if (!$response->getStatusCode() != 200) {
+      if ($response->getStatusCode() != 200) {
          throw new Exception('session_token seems invalid');
       }
       return true;
    }
 
+   /**
+    * @deprecated this could be moved to ItemHandler
+    */
    public function getSimpleEndpoints() {
       return $this->simpleEndpoints;
    }
 
+   /**
+    * @param $name
+    * @param $arguments
+    * @return \Psr\Http\Message\ResponseInterface
+    * @deprecated this will be removed, use the @method request() instead
+    */
    public function __call($name, $arguments) {
       $name = ucfirst($name);
       if (!in_array($name, $this->simpleEndpoints)) {
@@ -343,9 +355,7 @@ class Client {
    public function request($method, $uri, array $options = []) {
       $apiToken = $this->addTokens();
       try {
-         if (!empty($uri)) {
-            $options['headers']['Content-Type'] = "application/json";
-         }
+         $options['headers']['Content-Type'] = "application/json";
          if ($apiToken) {
             $sessionHeaders = ['Session-Token' => $apiToken['Session-Token']];
             if (key_exists('App-Token', $apiToken)) {
@@ -353,7 +363,7 @@ class Client {
             }
             $options = array_merge_recursive($options, ['headers' => $sessionHeaders]);
          }
-         $response = $this->httpClient->request($method, $this->url.$uri, $options);
+         $response = $this->httpClient->request($method, $this->url . $uri, $options);
          return $response;
       } catch (ClientException $e) {
          $response = $e->getResponse();
@@ -382,7 +392,7 @@ class Client {
     * @return array
     */
    public function getGlpiConfig() {
-      $response = $this->request('get', 'getFullSession');
+      $response = $this->request('get', 'getGlpiConfig');
       return ['statusCode' => $response->getStatusCode(), 'body' => $response->getBody()->getContents()];
    }
 
@@ -396,6 +406,7 @@ class Client {
     * @throws Exception
     *
     * @return \Psr\Http\Message\ResponseInterface the response sent by the server
+    * @deprecated this will be removed, use the @method request() instead
     */
    protected function doHttpRequest($verb = "get", $relative_uri = "", $params = []) {
       if (!empty($relative_uri)) {
