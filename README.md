@@ -4,6 +4,7 @@
 
 [![License](https://img.shields.io/github/license/flyve-mdm/flyve-mdm-android-inventory-agent.svg?&label=License)](https://github.com/flyve-mdm/composer-package-glpi/blob/develop/LICENSE.md)
 [![Follow twitter](https://img.shields.io/twitter/follow/FlyveMDM.svg?style=social&label=Twitter&style=flat-square)](https://twitter.com/FlyveMDM)
+![Project Status: WIP](http://www.repostatus.org/badges/latest/wip.svg)
 [![Telegram Group](https://img.shields.io/badge/Telegram-Group-blue.svg)](https://t.me/flyvemdm)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
@@ -33,9 +34,7 @@ This library specifically designed for PHP, features several functionalities com
 - JSON parsing
 - Batching
 
-You will be able to call to all the methods that belong to the [GLPI REST API](https://dev.flyve.org/glpi/apirest.php), for more information visit the [projects website](http://flyve.org/composer-package-glpi/).
-
-This project is a **work in progress**. The information here provided could change at any given time.
+You will be able to call to all the methods that belong to the [GLPI REST API](https://dev.flyve.org/glpi/apirest.php), for more information visit the [project's website](http://flyve.org/composer-package-glpi/).
 
 ## Build Status
 
