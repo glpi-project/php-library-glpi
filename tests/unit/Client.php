@@ -37,37 +37,65 @@ use Glpi\Api\Rest\tests\BaseTestCase;
  */
 class Client extends BaseTestCase {
 
+   /**
+    * @tags testInitSession
+    */
    public function testInitSession() {
       $client = $this->newTestedInstance(GLPI_URL);
 
       // Test invalid credentials
       $this->exception(function () use ($client) {
          $client->initSessionByCredentials('glpi', 'bad password');
-      })->isIdenticalTo($this->exception);
+      })->hasMessage('Cannot connect to api');
 
       // Test valid credentials
       $success = $client->initSessionByCredentials('glpi', 'glpi');
       $this->boolean($success)->isTrue();
 
       // Test invalid credentials for user token
-      $this->exception(function () use ($client){
+      $this->exception(function () use ($client) {
          $client->initSessionByUserToken('loremIpsum');
-      })->isIdenticalTo($this->exception);
+      })->hasMessage('Cannot connect to api');
+
+      // TODO: Test valid credentials for user token
+      /*$response = $client->initSessionByUserToken('loremIpsum');
+      $this->boolean($success)->isTrue();*/
    }
 
-   /*public function testComputer() {
-      $client = $this->newTestedInstance(GLPI_URL);
-      $this->boolean($client->initSessionByCredentials('glpi', 'glpi'))->isTrue();
-
-      $response = $client->computer('post', ['name' => 'computer 0001']);
-      $this->object($response)->isInstanceOf(\Psr\Http\Message\ResponseInterface::class);
-   }*/
-
+   /**
+    * @tags testGetFullSession
+    */
    public function testGetFullSession() {
       $this->loginSuperAdmin();
       $response = $this->client->getFullSession();
       $this->assertJsonResponse($response);
+   }
 
+   /**
+    * @tags testKillSession
+    */
+   public function testKillSession() {
+      $this->loginSuperAdmin();
+      $client = $this->client;
+      $response = $client->killSession();
+      $this->boolean($response)->isTrue();
+
+      // Test invalid kill session
+      $this->exception(function () use ($client) {
+         $client->killSession();
+      })->hasMessage('session_token seems invalid');
+   }
+
+
+   /**
+    * @tags testGetGlpiConfig
+    */
+   public function testGetGlpiConfig() {
+      $this->loginSuperAdmin();
+      $response = $this->client->getGlpiConfig();
+      $this->assertJsonResponse($response);
+      $arrayOfStdClass = json_decode($response['body']);
+      $this->boolean(property_exists($arrayOfStdClass, 'cfg_glpi'))->isTrue();
    }
 
 }
