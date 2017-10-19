@@ -146,40 +146,60 @@ class ItemHandler extends BaseTestCase {
    }
 
    /**
-    * @tags testGetAllItems
+    * @tags testGetMultipleItems
     */
    public function testGetMultipleItems() {
       $this->newTestedInstance($this->client);
+      $testedInstance = $this->testedInstance;
 
       // check for valid returned data
       $userId = 2;
-      $response = $this->testedInstance->getMultipleItems('User');
+      $entityId = 0;
+      $items = [
+         ['itemtype' => 'User', 'items_id' => $userId],
+         ['itemtype' => 'Entity', 'items_id' => $entityId],
+      ];
+      $response = $testedInstance->getMultipleItems($items);
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
       $this->array($arrayOfStdClass)
          ->integer($arrayOfStdClass[0]->id)->isEqualTo($userId)
-         ->integer($arrayOfStdClass[1]->id)->isEqualTo($userId + 1);
-
-      // check if extra headers are valid
-      $this->boolean(key_exists('contentRange', $response))->isTrue()
-         ->string($response['contentRange'])->isEqualTo('0-20/5');
-
-      $this->boolean(key_exists('acceptRange', $response))->isTrue()
-         ->string($response['acceptRange'])->isEqualTo('User 1000');
-
-      // check for invalid itemType
-      $response = $this->testedInstance->getAllItems('LoremIpsum');
-      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
+         ->integer($arrayOfStdClass[1]->id)->isEqualTo($entityId);
 
       // check for valid query param
-      $response = $this->testedInstance->getAllItems('User', ['expand_dropdowns' => true]);
+      $response = $testedInstance->getMultipleItems($items, ['expand_dropdowns' => true]);
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
       $this->object($arrayOfStdClass[0])
          ->string($arrayOfStdClass[0]->entities_id)->isEqualTo('Root entity');
 
-      // check for partial content
-      $response = $this->testedInstance->getAllItems('User', ['range' => '1-2']);
-      $this->assertJsonResponse($response, parent::HTTP_PARTIAL_CONTENT);
+      // check for invalid itemType
+      $items[0]['itemtype'] = 'loremIpsum';
+      $this->exception(function () use ($testedInstance, $items) {
+         $testedInstance->getMultipleItems($items);
+      })->hasCode(parent::HTTP_INTERNAL_SERVER_ERROR);
+
+      // check for missing itemType
+      $tempValue = $items[0]['itemtype'] = 'User';
+      unset($items[0]['itemtype']);
+      $this->exception(function () use ($testedInstance, $items) {
+         $testedInstance->getMultipleItems($items);
+      })->hasMessage("'itemtype' and 'items_id' are mandatory");
+      $items[0]['itemtype'] = $tempValue;
+
+      // check for invalid items_id
+      $items[0]['items_id'] = 'loremIpsum';
+      $response = $testedInstance->getMultipleItems($items);
+      $this->assertJsonResponse($response, parent::HTTP_NOT_FOUND);
+
+      // check for missing items_id
+      $tempValue = $items[0]['items_id'] = 2;
+      unset($items[0]['items_id']);
+      $this->exception(function () use ($testedInstance, $items) {
+         $testedInstance->getMultipleItems($items);
+      })->hasMessage("'itemtype' and 'items_id' are mandatory");
+      $items[0]['items_id'] = $tempValue;
+
+      // TODO: check for 401 error.
    }
 }
