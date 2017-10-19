@@ -31,6 +31,8 @@
 namespace Glpi\Api\Rest;
 
 
+use Glpi\Api\Rest\Exception\InsufficientArgumentsException;
+
 class ItemHandler {
    /**
     * @var Client
@@ -105,15 +107,21 @@ class ItemHandler {
 
    /**
     * Virtually call Get an item for each line in input. So, you can have a ticket, an user in the same query.
+    * @param array $items
     * @param array $queryString
     * @return array
     */
-   public function getMultipleItems(array $queryString){
-      $options['query'] = $queryString;
+   public function getMultipleItems(array $items, array $queryString = []){
+      foreach($items as $item){
+         if (!key_exists('itemtype', $item) || !key_exists('items_id', $item)) {
+            throw new InsufficientArgumentsException("'itemtype' and 'items_id' are mandatory");
+         }
+      }
+      $options['query'] = array_merge($queryString, ['items' => $items]);
       $response = $this->client->request('get', 'getMultipleItems', $options);
       return [
          'statusCode' => $response->getStatusCode(),
-         'body' => $response->getBody()->getContents()
+         'body' => $response->getBody()->getContents(),
       ];
    }
 
