@@ -15,6 +15,11 @@
       "name": "Thierry Bugier",
       "email": "tbugier@teclib.com",
       "role": "Developer"
+    },
+    {
+      "name": "Domingo Oropeza",
+      "email": "doropeza@teclib.com",
+      "role": "Developer"
     }
   ],
   "require": {
