@@ -28,10 +28,10 @@
  * ------------------------------------------------------------------------------
  */
 
-namespace GlpiProject\API\Rest\tests;
+namespace Glpi\Api\Rest\tests;
 
 use atoum;
-use GlpiProject\API\Rest\Client;
+use Glpi\Api\Rest\Client;
 
 class BaseTestCase extends atoum {
 

@@ -28,7 +28,7 @@
  * ------------------------------------------------------------------------------
  */
 
-namespace GlpiProject\API\Rest;
+namespace Glpi\Api\Rest;
 
 
 class EndPointHandler
