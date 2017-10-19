@@ -28,7 +28,7 @@
  * ------------------------------------------------------------------------------
  */
 
-namespace GlpiProject\API\Rest\Exception;
+namespace Glpi\Api\Rest\Exception;
 
-class BadEndpointException extends \RuntimeException {
+class InsufficientArgumentsException extends \RuntimeException {
 }

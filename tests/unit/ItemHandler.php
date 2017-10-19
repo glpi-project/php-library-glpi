@@ -6,9 +6,9 @@
  * Time: 02:24 PM
  */
 
-namespace GlpiProject\API\Rest\tests\units;
+namespace Glpi\Api\Rest\tests\units;
 
-use GlpiProject\API\Rest\tests\BaseTestCase;
+use Glpi\Api\Rest\tests\BaseTestCase;
 
 /**
  * @engine inline

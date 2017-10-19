@@ -11,7 +11,7 @@ composer require glpi-project/rest-api-client
 # How to use
 
 ```php
-use GlpiProject\API\Rest\Client;
+use Glpi\Api\Rest\Client;
 
 // Instanciate the API client
 $client = new Client('http://localhost/glpi/apirest.php/');

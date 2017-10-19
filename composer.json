@@ -34,13 +34,13 @@
   },
   "autoload": {
     "psr-4": {
-      "GlpiProject\\API\\Rest\\": "src/GlpiProject/API/Rest/"
+      "Glpi\\Api\\Rest\\": "src/Glpi/Api/Rest/"
     },
     "exclude-from-classmap": ["tests/"]
   },
   "autoload-dev": {
     "psr-4": {
-      "GlpiProject\\API\\Rest\\tests\\": "tests/"
+      "Glpi\\Api\\Rest\\tests\\": "tests/"
     }
   },
   "config": {

@@ -28,12 +28,12 @@
  * ------------------------------------------------------------------------------
  */
 
-namespace GlpiProject\API\Rest;
+namespace Glpi\Api\Rest;
 
 use GuzzleHttp\Client as HttpClient;
 use Exception;
-use GlpiProject\API\Rest\Exception\BadEndpointException;
-use GlpiProject\API\Rest\Exception\InsufficientArgumentsException;
+use Glpi\Api\Rest\Exception\BadEndpointException;
+use Glpi\Api\Rest\Exception\InsufficientArgumentsException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 
