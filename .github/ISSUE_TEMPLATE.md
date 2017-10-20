@@ -1,18 +1,15 @@
-# Issue 
-
 <!--
 PLEASE HELP US PROCESS GITHUB ISSUES FASTER BY PROVIDING THE FOLLOWING INFORMATION.
 -->
 
 ## I'm submitting a...
 <!-- Check one of the following options with "x" -->
-<pre><code>
-[ ] Regression (a behavior that used to work and stopped working in a new release)
-[ ] Bug report  <!-- Please search GitHub for a similar issue or PR before submitting -->
-[ ] Feature request
-[ ] Documentation issue or request
-[ ] Support request => Please do not submit support request here, instead see https://github.com/flyve-mdm/composer-package-glpi/blob/develop/CONTRIBUTING.md#questions-or-doubts
-</code></pre>
+
+- [ ] Regression (a behavior that used to work and stopped working in a new release)
+- [ ] Bug report  <!-- Please search GitHub for a similar issue or PR before submitting -->
+- [ ] Feature request
+- [ ] Documentation issue or request
+- [ ] Support request => Please do not submit support request here, instead see https://github.com/glpi-project/php-library-glpi/blob/develop/CONTRIBUTING.md#questions-or-doubts
 
 ## Current behavior
 <!-- Describe how the issue manifests. -->
@@ -37,4 +34,3 @@ For bug reports please provide the *STEPS TO REPRODUCE* and if possible a *MINIM
 Library Version: X.Y.Z
 <!-- Check whether this is still an issue in the most recent version, and add relevant information like Operating system version, IDE, package manager, HTTP server, browser ... -->
 </code></pre>
-
