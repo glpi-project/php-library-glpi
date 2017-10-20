@@ -79,13 +79,13 @@ class ItemHandler extends BaseTestCase {
       $response = $this->testedInstance->getAllItems('User');
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
-      $this->array($arrayOfStdClass)
+      $this->given($arrayOfStdClass)
          ->integer($arrayOfStdClass[0]->id)->isEqualTo($userId)
          ->integer($arrayOfStdClass[1]->id)->isEqualTo($userId + 1);
 
       // check if extra headers are valid
       $this->boolean(key_exists('contentRange', $response))->isTrue()
-         ->string($response['contentRange'])->isEqualTo('0-20/5');
+         ->string($response['contentRange'])->match('#\d+?-\d+?\/\d+?#');
 
       $this->boolean(key_exists('acceptRange', $response))->isTrue()
          ->string($response['acceptRange'])->isEqualTo('User 1000');
@@ -111,38 +111,42 @@ class ItemHandler extends BaseTestCase {
     */
    public function testGetSubItems() {
       $this->newTestedInstance($this->client);
+      $testedInstance = $this->testedInstance;
+
+      // Let's ensure than exists at least one simple subItem
+      $userId = 2;
+      $testEmail = 'get.sub@item.test';
+      $testedInstance->addItem('UserEmail', ['users_id' => $userId, 'email' => $testEmail]);
 
       // check for valid returned data
-      /*$userId = 2;
-      $response = $this->testedInstance->getSubItems('User', $userId, 'Log');
-      var_dump($response);
+      $response = $this->testedInstance->getSubItems('User', $userId, 'UserEmail');
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
-      $this->array($arrayOfStdClass)
-         ->integer($arrayOfStdClass[0]->items_id)->isEqualTo($userId)
-         ->string($arrayOfStdClass[1]->itemtype)->isEqualTo('User');
+      $this->given($arrayOfStdClass)
+         ->integer($arrayOfStdClass[0]->users_id)->isEqualTo($userId)
+         ->string($arrayOfStdClass[0]->email)->isEqualTo($testEmail);
 
       // check if extra headers are valid
       $this->boolean(key_exists('contentRange', $response))->isTrue()
-         ->string($response['contentRange'])->isEqualTo('0-50/200');
+         ->string($response['contentRange'])->match('#\d+?-\d+?\/\d+?#');
 
       $this->boolean(key_exists('acceptRange', $response))->isTrue()
-         ->string($response['acceptRange'])->isEqualTo('User 1000');
+         ->string($response['acceptRange'])->isEqualTo('UserEmail 1000');
 
       // check for invalid itemType
       $response = $this->testedInstance->getSubItems('Lorem', 2, 'Ipsum');
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
 
       // check for valid query param
-      $response = $this->testedInstance->getSubItems('User', 2, 'Log', ['expand_dropdowns' => true]);
+      $response = $this->testedInstance->getSubItems('User', 2, 'UserEmail', ['expand_dropdowns' => true]);
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
       $this->object($arrayOfStdClass[0])
-         ->string($arrayOfStdClass[0]->entities_id)->isEqualTo('Root entity');
+         ->string($arrayOfStdClass[0]->users_id)->isEqualTo('glpi');
 
       // check for partial content
-      $response = $this->testedInstance->getSubItems('User', 2, 'Log', ['range' => '1-2']);
-      $this->assertJsonResponse($response, parent::HTTP_PARTIAL_CONTENT);*/
+      $response = $this->testedInstance->getSubItems('User', 2, 'UserEmail', ['range' => '1-2']);
+      $this->assertJsonResponse($response, parent::HTTP_PARTIAL_CONTENT);
    }
 
    /**
@@ -211,7 +215,7 @@ class ItemHandler extends BaseTestCase {
       $testedInstance = $this->testedInstance;
 
       // check for bad request code
-      $response = $testedInstance->updateItem('Lorem', '', []);
+      $response = $testedInstance->updateItem('Lorem', 1, ['name' => 'glpi']);
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
 
       // check for update one item
@@ -220,13 +224,17 @@ class ItemHandler extends BaseTestCase {
       $response = $testedInstance->updateItem('User', $userId, $items);
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
-      $this->array($arrayOfStdClass)
+      $this->given($arrayOfStdClass)
          ->boolean(property_exists($arrayOfStdClass[0], $userId))->isTrue()
          ->boolean($arrayOfStdClass[0]->{$userId})->isTrue()
          ->boolean(property_exists($arrayOfStdClass[0], 'message'))->isTrue()
          ->string($arrayOfStdClass[0]->message)->isEmpty();
 
       // check for missing id
+      $this->exception(function () use ($testedInstance) {
+         $testedInstance->updateItem('User', '', []); // empty array
+      })->hasMessage("a key named 'id' to identify the item is mandatory");
+
       $this->exception(function () use ($testedInstance, $items) {
          $testedInstance->updateItem('User', '', [$items]);
       })->hasMessage("a key named 'id' to identify the item is mandatory");
@@ -236,7 +244,7 @@ class ItemHandler extends BaseTestCase {
       $response = $testedInstance->updateItem('User', '', $items);
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
-      $this->array($arrayOfStdClass)
+      $this->given($arrayOfStdClass)
          ->boolean(property_exists($arrayOfStdClass[0], $userId))->isTrue()
          ->boolean($arrayOfStdClass[0]->{$userId})->isTrue()
          ->boolean(property_exists($arrayOfStdClass[0], 'message'))->isTrue()
