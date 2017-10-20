@@ -15,12 +15,15 @@ namePage: projects
             <div class="jumbotron theme-default">
     {% endif %}
         <div class="container product">
-            {% assign name = repositorie.name | replace: "flyve-mdm-", "" %}   
-            {% assign name = name | replace: "-", " " %} 
+            {% assign name = repositorie.name | replace: "-", " " %} 
             <h2>{{ name }}</h2>
             <p>{{ repositorie.description }}</p>
-            <a class="btn btn-lg btn-primary" href="{{ url_repositorie }}" role="button">Visit website</a>
-            <a class="btn btn-lg btn-secondary" href="{{ repositorie.html_url }}" role="button">View on GitHub</a>
+            {% if name == 'angularjs glpi' or name == 'node module glpi' or name == 'php library glpi' or name == 'swift library glpi' or name == 'java library glpi' %}
+                <a class="btn btn-lg btn-primary" href="{{ url_repositorie }}" role="button">Visit website</a>
+                <a class="btn btn-lg btn-secondary" href="{{ repositorie.html_url }}" role="button">View on GitHub</a>
+            {% else %}
+                <a class="btn btn-lg btn-primary" href="{{ repositorie.html_url }}" role="button">View on GitHub</a>
+            {% endif %}
         </div>
     </div>
 {% endfor %}
