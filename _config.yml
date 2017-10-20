@@ -1,9 +1,9 @@
-title: composer package glpi
+title: php library glpi
 email: ml-flyvemdm@teclib.com
-twitter: flyvemdm
-baseurl: "/composer-package-glpi"
-url: "http://flyve.org"
-image: http://flyve.org/composer-package-glpi/images/logo2.png
+twitter: glpi_project
+baseurl: "/php-library-glpi"
+url: "https://glpi-project.github.io"
+image: https://glpi-project.github.io/php-library-glpi/images/logo2.png
 
 # Build settings
 markdown: kramdown
@@ -13,7 +13,7 @@ plugins:
   - jekyll-feed
   - jekyll-sitemap
 
-repository: flyve-mdm/composer-package-glpi
+repository: glpi-project/php-library-glpi
 
 sass:
     style: compressed

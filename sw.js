@@ -27,7 +27,7 @@ self.addEventListener('install', function(e) {
         '{{ "/css/main.css" | absolute_url }}',
         '{{ "/css/syntax.css" | absolute_url }}',
         '{{ "/images/typo.png" | absolute_url }}',
-        '{{ "/images/logo.png" | absolute_url }}',
+        '{{ "/images/logo2.png" | absolute_url }}',
         '{{ "/js/app.js" | absolute_url }}',
         '{{ "/js/jquery.min.js" | absolute_url }}',
         '{{ "/js/bootstrap.min.js" | absolute_url }}',
