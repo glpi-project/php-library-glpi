@@ -247,4 +247,57 @@ class ItemHandler extends BaseTestCase {
       $response = $testedInstance->updateItem('User', '', $items);
       $this->assertJsonResponse($response, parent::HTTP_MULTI_STATUS);
    }
+
+   /**
+    * @tags testAddItem
+    */
+   public function testAddItem() {
+      $this->newTestedInstance($this->client);
+      $testedInstance = $this->testedInstance;
+
+      // check for bad request code
+      $response = $testedInstance->addItem('Lorem', []);
+      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
+
+      // check for single add
+      $items = ['name' => 'add-me', 'password' => 'P455w0rd'];
+      $response = $testedInstance->addItem('User', $items);
+      $this->assertJsonResponse($response, parent::HTTP_CREATED);
+      $this->given($response)
+         ->boolean(key_exists('location', $response))->isTrue()
+         ->string($response['location'])->isNotEmpty()
+         ->boolean(key_exists('link', $response))->isTrue()
+         ->variable($response['link'])->isNull();
+
+      // check for bulk add
+      $items = [
+         ['name' => 'add-me-1', 'password' => 'P455w0rd'],
+         ['name' => 'add-me-2', 'password' => 'P455w0rd'],
+      ];
+      $response = $testedInstance->addItem('User', $items);
+      $this->assertJsonResponse($response, parent::HTTP_CREATED);
+      $arrayOfStdClass = json_decode($response['body']);
+      $this->given($arrayOfStdClass)
+         ->boolean(property_exists($arrayOfStdClass[0], 'id'))->isTrue()
+         ->integer($arrayOfStdClass[0]->id)
+         ->boolean(property_exists($arrayOfStdClass[0], 'message'))->isTrue()
+         ->string($arrayOfStdClass[0]->message)->isEmpty();
+      $this->given($response)
+         ->boolean(key_exists('location', $response))->isTrue()
+         ->variable($response['location'])->isNull()
+         ->boolean(key_exists('link', $response))->isTrue()
+         ->string($response['link'])->isNotEmpty();
+
+      // check for multi-status
+      $items = [
+         ['users_id' => -1, 'email' => 'lorem@ipsum.test'],
+         ['users_id' => 2, 'email' => 'lorem@ipsum.test'],
+      ];
+      $response = $testedInstance->addItem('UserEmail', $items);
+      $this->assertJsonResponse($response, parent::HTTP_MULTI_STATUS);
+      $arrayOfStdClass = json_decode($response['body']);
+      $this->given($arrayOfStdClass)
+         ->variable($arrayOfStdClass[0])->isEqualTo('ERROR_GLPI_PARTIAL_ADD');
+   }
+
 }
