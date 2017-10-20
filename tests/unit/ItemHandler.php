@@ -300,4 +300,75 @@ class ItemHandler extends BaseTestCase {
          ->variable($arrayOfStdClass[0])->isEqualTo('ERROR_GLPI_PARTIAL_ADD');
    }
 
+   /**
+    * @tags testDeleteItem
+    */
+   public function testDeleteItem() {
+      $this->newTestedInstance($this->client);
+      $testedInstance = $this->testedInstance;
+
+      // check for missing id
+      $this->exception(function () use ($testedInstance) {
+         $testedInstance->deleteItem('User', '', []); // empty array
+      })->hasMessage("a key named 'id' to identify the item is mandatory");
+
+      $this->exception(function () use ($testedInstance) {
+         $testedInstance->deleteItem('User', '', [[]]); // array with invalid sub-array.
+      })->hasMessage("a key named 'id' to identify the item is mandatory");
+
+      // check for bad request code
+      $response = $testedInstance->deleteItem('User', -1);
+      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
+
+      // Let's create first the tested data
+      $response = $testedInstance->addItem('User', [
+         ['name' => 'delete-me-forced', 'password' => 'P455w0rd'],
+         ['name' => 'delete-me-1', 'password' => 'P455w0rd'],
+         ['name' => 'delete-me-2', 'password' => 'P455w0rd'],
+      ]);
+      $usersCreated = json_decode($response['body']);
+
+      // check for delete one item
+      $userId = $usersCreated[0]->id;
+      $response = $testedInstance->deleteItem('User', $userId);
+      $this->assertJsonResponse($response);
+      $arrayOfStdClass = json_decode($response['body']);
+      $this->given($arrayOfStdClass)
+         ->boolean(property_exists($arrayOfStdClass[0], $userId))->isTrue()
+         ->boolean($arrayOfStdClass[0]->{$userId})->isTrue();
+
+      // check for optional params
+      $userId = $usersCreated[0]->id;
+      $response = $testedInstance->deleteItem('User', $userId, [], ['force_purge' => true]);
+      $this->assertJsonResponse($response);
+      $response = $testedInstance->getAnItem('User', $userId);
+      $this->assertJsonResponse($response, parent::HTTP_NOT_FOUND);
+
+      // check for bulk deletion
+      $userId = $usersCreated[1]->id;
+      $items = [['id' => $userId], ['id' => $usersCreated[2]->id],];
+      $response = $testedInstance->deleteItem('User', '', $items);
+      $this->assertJsonResponse($response);
+      $arrayOfStdClass = json_decode($response['body']);
+      $this->given($arrayOfStdClass)
+         ->boolean(property_exists($arrayOfStdClass[0], $userId))->isTrue()
+         ->boolean($arrayOfStdClass[0]->{$userId})->isTrue();
+
+      // check for partial deletion
+      $userId = -1;
+      $items = [['id' => $userId], ['id' => $usersCreated[2]->id],];
+      $response = $testedInstance->deleteItem('User', '', $items);
+      $this->assertJsonResponse($response, parent::HTTP_MULTI_STATUS);
+      $arrayOfStdClass = json_decode($response['body']);
+      $this->given($arrayOfStdClass)
+         ->variable($arrayOfStdClass[0])->isEqualTo('ERROR_GLPI_PARTIAL_DELETE');
+
+      // check for bulk deletion with extra params
+      $userId = $usersCreated[1]->id;
+      $items = [['id' => $userId], ['id' => $usersCreated[2]->id],];
+      $response = $testedInstance->deleteItem('User', '', $items, ['force_purge' => true]);
+      $this->assertJsonResponse($response);
+      $response = $testedInstance->getAnItem('User', $userId);
+      $this->assertJsonResponse($response, parent::HTTP_NOT_FOUND);
+   }
 }
