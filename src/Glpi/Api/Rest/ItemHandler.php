@@ -191,6 +191,16 @@ class ItemHandler {
     * @return array
     */
    public function updateItem($itemType, $id, array $queryString) {
+      if (!$id) {
+         if(!$queryString){
+            throw new InsufficientArgumentsException("a key named 'id' to identify the item is mandatory");
+         }
+         foreach ($queryString as $item) {
+            if (is_array($item) && !array_key_exists('id', $item)) {
+               throw new InsufficientArgumentsException("a key named 'id' to identify the item is mandatory");
+            }
+         }
+      }
       $options['body'] = json_encode(['input' => $queryString]);
       $response = $this->client->request('put', $itemType . '/' . $id, $options);
       return [
@@ -202,13 +212,25 @@ class ItemHandler {
    /**
     * @param $itemType
     * @param $id
+    * @param array $inputValues
     * @param array $queryString
     * @return array
     */
-   public function deleteItem($itemType, $id, array $queryString = []) {
+   public function deleteItem($itemType, $id, array $inputValues = [], array $queryString = []) {
       $options = [];
+      if (!$id) {
+         if(!$inputValues){
+            throw new InsufficientArgumentsException("a key named 'id' to identify the item is mandatory");
+         }
+         foreach ($inputValues as $item) {
+            if (is_array($item) && !array_key_exists('id', $item)) {
+               throw new InsufficientArgumentsException("a key named 'id' to identify the item is mandatory");
+            }
+         }
+         $options['body'] = json_encode(['input' => $inputValues]);
+      }
       if($queryString){
-         $options['body'] = json_encode(['input' => $queryString]);
+         $options['query'] = $queryString;
       }
       $response = $this->client->request('delete', $itemType . '/' . $id, $options);
       return [
