@@ -33,3 +33,28 @@ if (empty($glpiUrl)) {
 }
 $glpiUrl = trim($glpiUrl, '/') . '/';
 define('GLPI_URL', $glpiUrl);
+
+$glpiRoot = getenv('GLPI_ROOT_DIR');
+if (empty($glpiRoot)) {
+   die('environment variable GLPI_URL not set' . PHP_EOL);
+}
+define('GLPI_ROOT', $glpiRoot);
+
+// Giving --debug argument to atoum will be detected by GLPI too
+// the error handler in Toolbox may output to stdout a message and break process communication
+// in atoum
+$key = array_search('--debug', $_SERVER['argv']);
+if ($key) {
+   unset($_SERVER['argv'][$key]);
+}
+
+include_once(GLPI_ROOT . '/inc/includes.php');
+
+// need to set theses in DB, because tests for API use http call and this bootstrap file is not called
+Config::setConfigurationValues('core', $settings = [
+   'use_notifications' => '1',
+   'notifications_mailing' => '1',
+   'enable_api' => '1',
+   'enable_api_login_credentials' => '1',
+   'enable_api_login_external_token' => '1',
+]);
