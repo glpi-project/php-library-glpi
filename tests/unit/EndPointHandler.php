@@ -41,10 +41,6 @@ class EndPointHandler extends BaseTestCase {
       $this->loginSuperAdmin();
    }
 
-   public function tearDown() {
-//      $this->client->killSession();
-   }
-
    /**
     * @tags testGetMyProfiles
     */
