@@ -202,4 +202,49 @@ class ItemHandler extends BaseTestCase {
 
       // TODO: check for 401 error.
    }
+
+   /**
+    * @tags testUpdateItem
+    */
+   public function testUpdateItem() {
+      $this->newTestedInstance($this->client);
+      $testedInstance = $this->testedInstance;
+
+      // check for bad request code
+      $response = $testedInstance->updateItem('Lorem', '', []);
+      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
+
+      // check for update one item
+      $userId = 2;
+      $items = ['phone' => '555123'];
+      $response = $testedInstance->updateItem('User', $userId, $items);
+      $this->assertJsonResponse($response);
+      $arrayOfStdClass = json_decode($response['body']);
+      $this->array($arrayOfStdClass)
+         ->boolean(property_exists($arrayOfStdClass[0], $userId))->isTrue()
+         ->boolean($arrayOfStdClass[0]->{$userId})->isTrue()
+         ->boolean(property_exists($arrayOfStdClass[0], 'message'))->isTrue()
+         ->string($arrayOfStdClass[0]->message)->isEmpty();
+
+      // check for missing id
+      $this->exception(function () use ($testedInstance, $items) {
+         $testedInstance->updateItem('User', '', [$items]);
+      })->hasMessage("a key named 'id' to identify the item is mandatory");
+
+      // check for update multiple items
+      $items = [['id' => $userId, 'phone' => '555123'], ['id' => 3, 'phone' => '555123']];
+      $response = $testedInstance->updateItem('User', '', $items);
+      $this->assertJsonResponse($response);
+      $arrayOfStdClass = json_decode($response['body']);
+      $this->array($arrayOfStdClass)
+         ->boolean(property_exists($arrayOfStdClass[0], $userId))->isTrue()
+         ->boolean($arrayOfStdClass[0]->{$userId})->isTrue()
+         ->boolean(property_exists($arrayOfStdClass[0], 'message'))->isTrue()
+         ->string($arrayOfStdClass[0]->message)->isEmpty();
+
+      // check for a multi-status code
+      $items = [['id' => $userId, 'phone' => '555123'], ['id' => 0, 'phone' => '555123']];
+      $response = $testedInstance->updateItem('User', '', $items);
+      $this->assertJsonResponse($response, parent::HTTP_MULTI_STATUS);
+   }
 }
