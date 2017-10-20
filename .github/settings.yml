@@ -1,8 +1,8 @@
 repository:
-  name: composer-package-glpi
+  name: php-library-glpi
   description:  GLPI API Client Library for PHP
-  homepage: http://flyve.org/composer-package-glpi/
-  topics: composer-package, glpi-api
+  homepage: https://glpi-project.github.io/php-library-glpi/
+  topics: php, library, glpi-api
   private: false
   has_issues: true
   has_wiki: false
