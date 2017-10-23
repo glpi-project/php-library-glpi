@@ -41,6 +41,13 @@ class ItemHandler {
    }
 
    /**
+    * @return Client
+    */
+   public function getClient() {
+      return $this->client;
+   }
+
+   /**
     * Return the instance fields of itemtype identified by id.
     * @param string $itemType
     * @param integer $id
