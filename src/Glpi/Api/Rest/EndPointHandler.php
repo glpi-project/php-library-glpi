@@ -68,7 +68,7 @@ class EndPointHandler
     * Change active profile to the profiles_id one.
     * @see getMyProfiles endpoint for possible profiles.
     *
-    * @param $profiles_id
+    * @param integer $profiles_id
     * @return array
     */
    public function changeActiveProfile($profiles_id) {
