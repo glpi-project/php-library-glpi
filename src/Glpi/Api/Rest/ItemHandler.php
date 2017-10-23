@@ -42,8 +42,8 @@ class ItemHandler {
 
    /**
     * Return the instance fields of itemtype identified by id.
-    * @param $itemType
-    * @param $id
+    * @param string $itemType
+    * @param integer $id
     * @param array $queryString
     * @return array
     */
@@ -61,7 +61,7 @@ class ItemHandler {
 
    /**
     * Return a collection of rows of the itemtype.
-    * @param $itemType
+    * @param string $itemType
     * @param array $queryString
     * @return array
     */
@@ -81,9 +81,9 @@ class ItemHandler {
 
    /**
     * Return a collection of rows of the itemtype.
-    * @param $itemType
-    * @param $id
-    * @param $subItem
+    * @param string $itemType
+    * @param integer $id of main item type
+    * @param string $subItem
     * @param array $queryString
     * @return array
     */
@@ -124,7 +124,7 @@ class ItemHandler {
 
    /**
     * Virtually call Get an item for each line in input. So, you can have a ticket, an user in the same query.
-    * @param $itemType
+    * @param string $itemType
     * @param array $queryString
     * @return array
     */
@@ -142,7 +142,7 @@ class ItemHandler {
 
    /**
     * Virtually call Get an item for each line in input. So, you can have a ticket, an user in the same query.
-    * @param $itemType
+    * @param string $itemType
     * @param array $queryString
     * @return array
     */
@@ -165,7 +165,7 @@ class ItemHandler {
     * you should insert your parameters into a 'uploadManifest' parameter.
     * Theses serialized data should be a json string.
     *
-    * @param $itemType
+    * @param string $itemType
     * @param array $queryString
     * @return array
     */
@@ -182,8 +182,8 @@ class ItemHandler {
 
    /**
     * Update an object (or multiple objects) existing in GLPI.
-    * @param $itemType
-    * @param $id
+    * @param string $itemType
+    * @param integer $id
     * @param array $queryString
     * @return array
     */
@@ -207,8 +207,8 @@ class ItemHandler {
    }
 
    /**
-    * @param $itemType
-    * @param $id
+    * @param string $itemType
+    * @param integer $id
     * @param array $inputValues
     * @param array $queryString
     * @return array
