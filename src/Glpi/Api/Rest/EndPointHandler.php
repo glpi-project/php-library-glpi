@@ -41,6 +41,13 @@ class EndPointHandler
    }
 
    /**
+    * @return Client
+    */
+   public function getClient() {
+      return $this->client;
+   }
+
+   /**
     * Return all the profiles associated to logged user.
     * @return array
     */
