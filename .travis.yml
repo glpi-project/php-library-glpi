@@ -1,17 +1,24 @@
 language: php
+
 env:
   global:
-    - GLPI_URL="http://localhost/glpi/apirest.php/"
-    - GLPI_SOURCE="https://github.com/glpi-project/glpi -b 9.2/bugfixes"
+    - GLPI_URL=http://localhost:8080
+    - GLPI_ROOT_DIR=$TRAVIS_BUILD_DIR/../glpi
+    - GLPI_SOURCE=https://github.com/glpi-project/glpi -b 9.2/bugfixes
 
 before_script:
-  - mysql -u root -e 'create database glpitest;'
   - phpenv config-rm xdebug.ini || true
   - rm -f composer.lock
-  - git clone --depth=1 $GLPI_SOURCE ../glpi && cd ../glpi
+  # let's clone and config GLPI for the client
+  - git clone --depth=1 $GLPI_SOURCE $GLPI_ROOT_DIR && cd $GLPI_ROOT_DIR
   - composer install --no-dev --no-interaction
-  - php tools/cliinstall.php --db=glpitest --user=root --tests
-  - cd ../php-library-glpi && composer install --no-interaction
+  - mysql -u root -e 'create database glpitest;'
+  - php tools/cliinstall.php --db=glpitest --user=root
+  # start a web server on port 8080, run in the background; wait for initialization
+  - php -S localhost:8080 > /dev/null 2>&1 &
+  - until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
+  # go back to project dir and install vendors
+  - cd $TRAVIS_BUILD_DIR && composer install --no-interaction
 
 script:
   - vendor/bin/atoum --debug -bf tests/bootstrap.php -no-cc --max-children-number 1 -d tests/unit
