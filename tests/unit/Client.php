@@ -28,6 +28,7 @@
 namespace Glpi\Api\Rest\tests\units;
 
 use Glpi\Api\Rest\tests\BaseTestCase;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * @engine inline
@@ -93,6 +94,69 @@ class Client extends BaseTestCase {
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
       $this->boolean(property_exists($arrayOfStdClass, 'cfg_glpi'))->isTrue();
+   }
+
+   /**
+    * @tags testLostPassword
+    */
+   public function testLostPassword() {
+      $mockedClient = new \mock\Glpi\Api\Rest\Client(GLPI_URL);
+
+      // check for bad request
+      $response = $mockedClient->lostPassword('lorem@ipsum.test');
+      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
+
+      // check for missing params request
+      $this->exception(function () use ($mockedClient) {
+         $mockedClient->lostPassword('lorem@ipsum.test', 'lorem');
+      })->hasMessage('The recovery and new password are mandatory');
+
+      $this->exception(function () use ($mockedClient) {
+         $mockedClient->lostPassword('lorem@ipsum.test', '', 'lorem');
+      })->hasMessage('The recovery and new password are mandatory');
+
+      // as we can't check for the email message let's mock the response.
+      $messages = [
+         'emailSentMessage' => 'An email has been sent to your email address.',
+         'invalidTokenMessage' => 'Your password reset request has expired or is invalid.',
+         'successMessage' => 'Reset password successful.',
+      ];
+      // first call
+      $mockedClient->getMockController()->request[1] = $this->changeMockedResponse(parent::HTTP_OK,
+         $messages['emailSentMessage']);
+      // second call
+      $mockedClient->getMockController()->request[2] = $this->changeMockedResponse(parent::HTTP_BAD_REQUEST,
+         $messages['invalidTokenMessage']);
+      // third call
+      $mockedClient->getMockController()->request[3] = $this->changeMockedResponse(parent::HTTP_OK,
+         $messages['successMessage']);
+
+      // check for "valid" request for email notification
+      $response = $mockedClient->lostPassword('lorem@ipsum.test');
+      $this->assertJsonResponse($response);
+      $this->string(json_decode($response['body'])[0])->isEqualTo($messages['emailSentMessage']);
+
+      // check for "invalid" request for reset password
+      $response = $mockedClient->lostPassword('lorem@ipsum.test', 'invalidToken', 'newFakePassword');
+      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
+      $this->string(json_decode($response['body'])[0])->isEqualTo($messages['invalidTokenMessage']);
+
+      // check for "valid" request for reset password
+      $response = $mockedClient->lostPassword('lorem@ipsum.test', 'm0ck3dT0k3n', 'newFakePassword');
+      $this->assertJsonResponse($response);
+      $this->string(json_decode($response['body'])[0])->isEqualTo($messages['successMessage']);
+
+   }
+
+   /**
+    * @param integer $httpStatusCode
+    * @param string $messages
+    * @return Response
+    */
+   private function changeMockedResponse($httpStatusCode, $messages) {
+      return new Response($httpStatusCode,
+         ['Content-Type' => 'application/json; charset=UTF-8'],
+         json_encode([$messages]));
    }
 
 }
