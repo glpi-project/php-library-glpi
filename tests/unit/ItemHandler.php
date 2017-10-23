@@ -135,7 +135,8 @@ class ItemHandler extends BaseTestCase {
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
 
       // check for valid query param
-      $response = $this->testedInstance->getSubItems('User', 2, 'UserEmail', ['expand_dropdowns' => true]);
+      $response = $this->testedInstance->getSubItems('User', 2, 'UserEmail',
+         ['expand_dropdowns' => true]);
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
       $this->object($arrayOfStdClass[0])

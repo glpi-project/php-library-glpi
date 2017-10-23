@@ -137,7 +137,8 @@ class Client extends BaseTestCase {
       $this->string(json_decode($response['body'])[0])->isEqualTo($messages['emailSentMessage']);
 
       // check for "invalid" request for reset password
-      $response = $mockedClient->lostPassword('lorem@ipsum.test', 'invalidToken', 'newFakePassword');
+      $response = $mockedClient->lostPassword('lorem@ipsum.test', 'invalidToken',
+         'newFakePassword');
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
       $this->string(json_decode($response['body'])[0])->isEqualTo($messages['invalidTokenMessage']);
 
@@ -158,5 +159,4 @@ class Client extends BaseTestCase {
          ['Content-Type' => 'application/json; charset=UTF-8'],
          json_encode([$messages]));
    }
-
 }
