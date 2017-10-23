@@ -441,4 +441,32 @@ class Client {
 
       return $headers;
    }
+
+   /**
+    * Allows to request password recovery and password reset.
+    * This endpoint works under the following conditions:
+    *  - GLPI has notifications enabled
+    *  - The email address of the user belongs to a user account.
+    *
+    * @param $email
+    * @param string $recoveryToken
+    * @param string $newPassword
+    * @return array
+    */
+   public function lostPassword($email, $recoveryToken = '', $newPassword = '') {
+      $params['email'] = $email;
+      if(($recoveryToken && !$newPassword) || (!$recoveryToken && $newPassword)){
+         throw new InsufficientArgumentsException('The recovery and new password are mandatory');
+      }
+      if($recoveryToken && $newPassword){
+         $params['password_forget_token'] = $recoveryToken;
+         $params['password'] = $newPassword;
+      }
+      $options['body'] = json_encode($params);
+      $response = $this->request('put', 'lostPassword', $options);
+      return [
+         'statusCode' => $response->getStatusCode(),
+         'body' => $response->getBody()->getContents(),
+      ];
+   }
 }
