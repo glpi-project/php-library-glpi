@@ -27,18 +27,21 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$glpiUrl = getenv('GLPI_URL');
+$glpiUrl = getenv('GLPI_URL'); // set this on .travis.yml
 if (empty($glpiUrl)) {
    die('environment variable GLPI_URL not set' . PHP_EOL);
 }
-$glpiUrl = trim($glpiUrl, '/') . '/';
-define('GLPI_URL', $glpiUrl);
+define('GLPI_URL', $glpiUrl . '/apirest.php/');
 
-$glpiRoot = getenv('GLPI_ROOT_DIR');
+$glpiRoot = getenv('GLPI_ROOT_DIR'); // set this on .travis.yml
 if (empty($glpiRoot)) {
-   die('environment variable GLPI_URL not set' . PHP_EOL);
+   die('environment variable GLPI_ROOT_DIR not set' . PHP_EOL);
 }
-define('GLPI_ROOT', $glpiRoot);
+define('GLPI_ROOT', realpath($glpiRoot));
+if (!file_exists(GLPI_ROOT . '/config/config_db.php')) {
+   echo "config_db.php missing. Did GLPI successfully initialized ?\n";
+   exit(1);
+}
 
 // Giving --debug argument to atoum will be detected by GLPI too
 // the error handler in Toolbox may output to stdout a message and break process communication
@@ -48,10 +51,12 @@ if ($key) {
    unset($_SERVER['argv'][$key]);
 }
 
-include_once(GLPI_ROOT . '/inc/includes.php');
+require_once(GLPI_ROOT . '/inc/includes.php');
 
 // need to set theses in DB, because tests for API use http call and this bootstrap file is not called
-Config::setConfigurationValues('core', $settings = [
+Config::setConfigurationValues('core', [
+   'url_base' => $glpiUrl,
+   'url_base_api' => $glpiUrl . '/apirest.php',
    'use_notifications' => '1',
    'notifications_mailing' => '1',
    'enable_api' => '1',
