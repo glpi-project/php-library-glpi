@@ -78,11 +78,13 @@ class ItemHandler {
          $options['query'] = $queryString;
       }
       $response = $this->client->request('get', $itemType . '/', $options);
+      $contentRange = $response->getHeader('Content-Range');
+      $acceptRange = $response->getHeader('Accept-Range');
       return [
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
-         'contentRange' => $response->getHeader('Content-Range')[0],
-         'acceptRange' => $response->getHeader('Accept-Range')[0],
+         'contentRange' => ($contentRange) ? $contentRange[0] : null,
+         'acceptRange' => ($acceptRange) ? $acceptRange[0] : null,
       ];
    }
 
@@ -101,11 +103,13 @@ class ItemHandler {
       }
       $response = $this->client->request('get', $itemType . '/' . $id . '/' . $subItem,
          $options);
+      $contentRange = $response->getHeader('Content-Range');
+      $acceptRange = $response->getHeader('Accept-Range');
       return [
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
-         'contentRange' => $response->getHeader('Content-Range')[0],
-         'acceptRange' => $response->getHeader('Accept-Range')[0],
+         'contentRange' => ($contentRange) ? $contentRange[0] : null,
+         'acceptRange' => ($acceptRange) ? $acceptRange[0] : null,
       ];
    }
 
@@ -115,8 +119,8 @@ class ItemHandler {
     * @param array $queryString
     * @return array
     */
-   public function getMultipleItems(array $items, array $queryString = []){
-      foreach($items as $item){
+   public function getMultipleItems(array $items, array $queryString = []) {
+      foreach ($items as $item) {
          if (!key_exists('itemtype', $item) || !key_exists('items_id', $item)) {
             throw new InsufficientArgumentsException("'itemtype' and 'items_id' are mandatory");
          }
@@ -179,11 +183,13 @@ class ItemHandler {
    public function addItem($itemType, array $queryString) {
       $options['body'] = json_encode(['input' => $queryString]);
       $response = $this->client->request('post', $itemType . '/', $options);
+      $location = $response->getHeader('location');
+      $link = $response->getHeader('Link');
       return [
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
-         'location' => $response->getHeader('location')[0],
-         'link' => $response->getHeader('Link')[0],
+         'location' => ($location) ? $location[0] : null,
+         'link' => ($link) ? $link[0] : null,
       ];
    }
 
@@ -196,7 +202,7 @@ class ItemHandler {
     */
    public function updateItem($itemType, $id, array $queryString) {
       if (!$id) {
-         if(!$queryString){
+         if (!$queryString) {
             throw new InsufficientArgumentsException("a key named 'id' to identify the item is mandatory");
          }
          foreach ($queryString as $item) {
@@ -223,7 +229,7 @@ class ItemHandler {
    public function deleteItem($itemType, $id, array $inputValues = [], array $queryString = []) {
       $options = [];
       if (!$id) {
-         if(!$inputValues){
+         if (!$inputValues) {
             throw new InsufficientArgumentsException("a key named 'id' to identify the item is mandatory");
          }
          foreach ($inputValues as $item) {
@@ -233,7 +239,7 @@ class ItemHandler {
          }
          $options['body'] = json_encode(['input' => $inputValues]);
       }
-      if($queryString){
+      if ($queryString) {
          $options['query'] = $queryString;
       }
       $response = $this->client->request('delete', $itemType . '/' . $id, $options);
