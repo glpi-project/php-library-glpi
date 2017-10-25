@@ -455,10 +455,10 @@ class Client {
     */
    public function lostPassword($email, $recoveryToken = '', $newPassword = '') {
       $params['email'] = $email;
-      if(($recoveryToken && !$newPassword) || (!$recoveryToken && $newPassword)){
+      if (($recoveryToken && !$newPassword) || (!$recoveryToken && $newPassword)) {
          throw new InsufficientArgumentsException('The recovery and new password are mandatory');
       }
-      if($recoveryToken && $newPassword){
+      if ($recoveryToken && $newPassword) {
          $params['password_forget_token'] = $recoveryToken;
          $params['password'] = $newPassword;
       }

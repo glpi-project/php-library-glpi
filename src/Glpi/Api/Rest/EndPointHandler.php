@@ -28,8 +28,7 @@
 namespace Glpi\Api\Rest;
 
 
-class EndPointHandler
-{
+class EndPointHandler {
 
    /**
     * @var Client
@@ -122,7 +121,7 @@ class EndPointHandler
     */
    public function changeActiveEntities(array $parameters = []) {
       $options = [];
-      if($parameters){
+      if ($parameters) {
          $options['body'] = json_encode($parameters);
       }
       $response = $this->client->request('post', 'changeActiveEntities', $options);
@@ -131,6 +130,5 @@ class EndPointHandler
          'body' => $response->getBody()->getContents(),
       ];
    }
-
 
 }
