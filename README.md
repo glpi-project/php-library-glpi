@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/github/license/glpi-project/php-library-glpi.svg?&label=License)](https://github.com/glpi-project/php-library-glpi/blob/develop/LICENSE.md)
 [![Follow twitter](https://img.shields.io/twitter/follow/GLPI_PROJECT.svg?style=social&label=Twitter&style=flat-square)](https://twitter.com/GLPI_PROJECT)
-![Project Status: WIP](http://www.repostatus.org/badges/latest/wip.svg)
+[![Project Status: WIP](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/)
 [![Telegram Group](https://img.shields.io/badge/Telegram-Group-blue.svg)](https://t.me/glpien)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
@@ -16,6 +16,7 @@ It helps companies to manage their information system, since it's able to build 
 
 * [Synopsis](#synopsis)
 * [Build Status](#build-status)
+* [Compatibility Matrix](#matrix)
 * [Installation](#installation)
 * [Code examples](#code-examples)
 * [Documentation](#documentation)
@@ -43,6 +44,12 @@ You will be able to call to all the methods that belong to the [GLPI REST API](h
 |**Release channel**|Beta Channel|
 |:---:|:---:|
 |[![Travis build](https://api.travis-ci.org/glpi-project/php-library-glpi.svg?branch=master)](https://travis-ci.org/glpi-project/php-library-glpi)|[![Travis build](https://api.travis-ci.org/glpi-project/php-library-glpi.svg?branch=develop)](https://travis-ci.org/glpi-project/php-library-glpi)|
+
+## Matrix
+
+|**GLPI Version**|9.1.1|9.1.2|9.1.3|9.1.5|9.1.6|9.2.0|
+|:----|----|----|----|---|---|---|
+|**GLPI API Client**|||||||
 
 ## Installation
 
