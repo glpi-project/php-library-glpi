@@ -7,6 +7,7 @@ env:
     - GLPI_SOURCE=https://github.com/glpi-project/glpi -b 9.2/bugfixes
 
 before_script:
+  - echo 'always_populate_raw_post_data = -1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - phpenv config-rm xdebug.ini || true
   - rm -f composer.lock
   # let's clone and config GLPI for the client
