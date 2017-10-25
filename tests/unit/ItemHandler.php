@@ -377,4 +377,33 @@ class ItemHandler extends BaseTestCase {
       $response = $testedInstance->getAnItem('User', $userId);
       $this->assertJsonResponse($response, parent::HTTP_NOT_FOUND);
    }
+
+   /**
+    * @tags testMagicCall
+    */
+   public function testMagicCall() {
+      $this->newTestedInstance($this->client);
+      $testedInstance = $this->testedInstance;
+
+      // check for invalid itemType name
+      $this->exception(function () use ($testedInstance) {
+         $testedInstance->LoremIpsum('read', []);
+      })->hasMessage("EndPoint 'LoremIpsum' is not valid, resource not found or not an instance of CommonDBTM");
+
+      // check for invalid method name
+      $this->exception(function () use ($testedInstance) {
+         $testedInstance->User('loremIpsum', []);
+      })->hasMessage("The method 'loremIpsum' is not valid, please try again.");
+
+      // check for missing arguments
+      $this->exception(function () use ($testedInstance) {
+         $testedInstance->User('read');
+      })->hasMessage("The method 'loremIpsum' is not valid, please try again.");
+
+      // check for missing arguments
+      $response = $testedInstance->User('read', 2);
+      $this->assertJsonResponse($response);
+      $stdClass = json_decode($response['body']);
+      $this->given($stdClass)->integer($stdClass->id);
+   }
 }
