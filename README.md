@@ -55,24 +55,24 @@ composer require glpi-project/rest-api-client
 It's easy to implement, as you see in the following example:
 
 ```php
-use Glpi\Api\Rest\Client;
-
 // Instanciate the API client
-$client = new Client('http://localhost/glpi/apirest.php/');
+$client = new Glpi\Api\Rest\Client('http://localhost/glpi/apirest.php/');
 
 // Authenticate
-if (!$client->initSessionByCredentials('glpi', 'glpi')) {
-   die('failed to authenticate');
+try {
+   $client->initSessionByCredentials('glpi', 'glpi');
+} catch (Exception $e) {
+   echo $e->getMessage();
+   die();
 }
 
 // The client handles the session token for you (app token not yet supported)
 
 // do something
-try {
-   $response = $client->computer('post', ['name' => 'computer 0001']);
-} catch (\Exception $e) {
-   // Handle here HTTP >= 400
-}
+$itemHandler = new \Glpi\Api\Rest\ItemHandler($client);
+$response = $itemHandler->getAnItem('User', 2);
+$user = json_decode($response['body']);
+echo "User name: " . $user->name . "\n";
 ```
 
 ## Documentation
