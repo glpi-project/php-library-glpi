@@ -28,7 +28,9 @@
 namespace Glpi\Api\Rest;
 
 
+use Glpi\Api\Rest\Exception\BadEndpointException;
 use Glpi\Api\Rest\Exception\InsufficientArgumentsException;
+use Psr\Log\InvalidArgumentException;
 
 class ItemHandler {
    /**
@@ -247,6 +249,57 @@ class ItemHandler {
          'statusCode' => $response->getStatusCode(),
          'body' => $response->getBody()->getContents(),
       ];
+   }
+
+   /**
+    * Magic method to execute CRUD actions with a single ItemTypes dynamically.
+    * Send your ItemType as a method and the arguments to be executed.
+    * Each ItemType's name came from the table's name in the DB schema.
+    * Examples:
+    *    Alerts => glpi_alerts,
+    *    Calendars_Holidays => glpi_calendars_holidays,
+    *    Consumableitems => glpi_consumableitems,
+    *
+    * How to use this?. You can check the file 'example/magicCallExample.php' for reference.
+    *
+    * @param string $name of the itemtype
+    * @param mixed $arguments first is method, second is the input, and third is the query string
+    * @return array|null
+    * @throws InsufficientArgumentsException|BadEndpointException|InvalidArgumentException
+    */
+   public function __call($name, $arguments) {
+      $name = ucfirst($name);
+
+      if (func_num_args() < 2) {
+         throw new InsufficientArgumentsException();
+      }
+
+      $method = strtolower($arguments[0]);
+      $input = isset($arguments[1]) ? $arguments[1] : [];
+      $params = isset($arguments[2]) ? $arguments[2] : [];
+      $result = null;
+      switch ($method) {
+         case 'create':
+            $result = $this->addItem($name, $input);
+            break;
+         case 'read':
+            $result = $this->getAnItem($name, (int)$input, $params);
+            break;
+         case 'update':
+            $result = $this->updateItem($name, '', $input);
+            break;
+         case 'delete':
+            $result = $this->deleteItem($name, '', $input, $params);
+            break;
+         default:
+            throw new InvalidArgumentException("The method '{$method}' is not valid, please try again.");
+            break;
+      }
+      $body = json_decode($result['body']);
+      if ($result['statusCode'] == 400 && $body[0] == 'ERROR_RESOURCE_NOT_FOUND_NOR_COMMONDBTM') {
+         throw new BadEndpointException("EndPoint '{$name}' is not valid, ". $body[1]);
+      }
+      return $result;
    }
 
 }
