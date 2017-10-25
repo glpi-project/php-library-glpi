@@ -121,32 +121,28 @@ class Client extends BaseTestCase {
          'invalidTokenMessage' => 'Your password reset request has expired or is invalid.',
          'successMessage' => 'Reset password successful.',
       ];
-      // first call
-      $mockedClient->getMockController()->request[1] = $this->changeMockedResponse(parent::HTTP_OK,
-         $messages['emailSentMessage']);
-      // second call
-      $mockedClient->getMockController()->request[2] = $this->changeMockedResponse(parent::HTTP_BAD_REQUEST,
-         $messages['invalidTokenMessage']);
-      // third call
-      $mockedClient->getMockController()->request[3] = $this->changeMockedResponse(parent::HTTP_OK,
-         $messages['successMessage']);
 
       // check for "valid" request for email notification
+      $mockedClient->getMockController()->request = $this->changeMockedResponse(parent::HTTP_OK,
+         $messages['emailSentMessage']);
       $response = $mockedClient->lostPassword('lorem@ipsum.test');
       $this->assertJsonResponse($response);
       $this->string(json_decode($response['body'])[0])->isEqualTo($messages['emailSentMessage']);
 
       // check for "invalid" request for reset password
+      $mockedClient->getMockController()->request = $this->changeMockedResponse(parent::HTTP_BAD_REQUEST,
+         $messages['invalidTokenMessage']);
       $response = $mockedClient->lostPassword('lorem@ipsum.test', 'invalidToken',
          'newFakePassword');
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
       $this->string(json_decode($response['body'])[0])->isEqualTo($messages['invalidTokenMessage']);
 
       // check for "valid" request for reset password
+      $mockedClient->getMockController()->request = $this->changeMockedResponse(parent::HTTP_OK,
+         $messages['successMessage']);
       $response = $mockedClient->lostPassword('lorem@ipsum.test', 'm0ck3dT0k3n', 'newFakePassword');
       $this->assertJsonResponse($response);
       $this->string(json_decode($response['body'])[0])->isEqualTo($messages['successMessage']);
-
    }
 
    /**
