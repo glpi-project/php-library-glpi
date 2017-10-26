@@ -29,6 +29,7 @@ namespace Glpi\Api\Rest\tests;
 
 use atoum;
 use Glpi\Api\Rest\Client;
+use GuzzleHttp\Psr7\Response;
 
 class BaseTestCase extends atoum {
 
@@ -74,5 +75,16 @@ class BaseTestCase extends atoum {
       if (key_exists('body', $response) && $response['body']) {
          $this->json($response['body']);
       }
+   }
+
+   /**
+    * @param integer $httpStatusCode
+    * @param string $messages
+    * @return Response
+    */
+   protected function changeMockedResponse($httpStatusCode, $messages) {
+      return new Response($httpStatusCode,
+         ['Content-Type' => 'application/json; charset=UTF-8'],
+         json_encode([$messages]));
    }
 }

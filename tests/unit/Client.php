@@ -146,14 +146,4 @@ class Client extends BaseTestCase {
       $this->string(json_decode($response['body'])[0])->isEqualTo($messages['successMessage']);
    }
 
-   /**
-    * @param integer $httpStatusCode
-    * @param string $messages
-    * @return Response
-    */
-   private function changeMockedResponse($httpStatusCode, $messages) {
-      return new Response($httpStatusCode,
-         ['Content-Type' => 'application/json; charset=UTF-8'],
-         json_encode([$messages]));
-   }
 }
