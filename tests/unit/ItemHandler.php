@@ -187,7 +187,8 @@ class ItemHandler extends BaseTestCase {
       unset($items[0]['itemtype']);
       $this->exception(function () use ($testedInstance, $items) {
          $testedInstance->getMultipleItems($items);
-      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'itemtype' and 'items_id'"));
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',
+         "'itemtype' and 'items_id'"));
       $items[0]['itemtype'] = $tempValue;
 
       // check for invalid items_id
@@ -200,7 +201,8 @@ class ItemHandler extends BaseTestCase {
       unset($items[0]['items_id']);
       $this->exception(function () use ($testedInstance, $items) {
          $testedInstance->getMultipleItems($items);
-      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'itemtype' and 'items_id'"));
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',
+         "'itemtype' and 'items_id'"));
       $items[0]['items_id'] = $tempValue;
 
       // TODO: check for 401 error.
@@ -232,11 +234,13 @@ class ItemHandler extends BaseTestCase {
       // check for missing id
       $this->exception(function () use ($testedInstance) {
          $testedInstance->updateItem('User', '', []); // empty array
-      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'id' to identify the item"));
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',
+         "'id' to identify the item"));
 
       $this->exception(function () use ($testedInstance, $items) {
          $testedInstance->updateItem('User', '', [$items]);
-      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'id' to identify the item"));
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',
+         "'id' to identify the item"));
 
       // check for update multiple items
       $items = [['id' => $userId, 'phone' => '555123'], ['id' => 3, 'phone' => '555123']];
@@ -317,11 +321,13 @@ class ItemHandler extends BaseTestCase {
       // check for missing id
       $this->exception(function () use ($testedInstance) {
          $testedInstance->deleteItem('User', '', []); // empty array
-      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'id' to identify the item"));
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',
+         "'id' to identify the item"));
 
       $this->exception(function () use ($testedInstance) {
          $testedInstance->deleteItem('User', '', [[]]); // array with invalid sub-array.
-      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'id' to identify the item"));
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',
+         "'id' to identify the item"));
 
       // check for bad request code
       $response = $testedInstance->deleteItem('User', -1);
