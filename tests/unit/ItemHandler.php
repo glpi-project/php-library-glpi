@@ -27,6 +27,7 @@
 
 namespace Glpi\Api\Rest\tests\units;
 
+use Glpi\Api\Rest\ErrorHandler;
 use Glpi\Api\Rest\tests\BaseTestCase;
 
 /**
@@ -186,7 +187,7 @@ class ItemHandler extends BaseTestCase {
       unset($items[0]['itemtype']);
       $this->exception(function () use ($testedInstance, $items) {
          $testedInstance->getMultipleItems($items);
-      })->hasMessage("'itemtype' and 'items_id' are mandatory");
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'itemtype' and 'items_id'"));
       $items[0]['itemtype'] = $tempValue;
 
       // check for invalid items_id
@@ -199,7 +200,7 @@ class ItemHandler extends BaseTestCase {
       unset($items[0]['items_id']);
       $this->exception(function () use ($testedInstance, $items) {
          $testedInstance->getMultipleItems($items);
-      })->hasMessage("'itemtype' and 'items_id' are mandatory");
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'itemtype' and 'items_id'"));
       $items[0]['items_id'] = $tempValue;
 
       // TODO: check for 401 error.
@@ -231,11 +232,11 @@ class ItemHandler extends BaseTestCase {
       // check for missing id
       $this->exception(function () use ($testedInstance) {
          $testedInstance->updateItem('User', '', []); // empty array
-      })->hasMessage("a key named 'id' to identify the item is mandatory");
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'id' to identify the item"));
 
       $this->exception(function () use ($testedInstance, $items) {
          $testedInstance->updateItem('User', '', [$items]);
-      })->hasMessage("a key named 'id' to identify the item is mandatory");
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'id' to identify the item"));
 
       // check for update multiple items
       $items = [['id' => $userId, 'phone' => '555123'], ['id' => 3, 'phone' => '555123']];
@@ -316,11 +317,11 @@ class ItemHandler extends BaseTestCase {
       // check for missing id
       $this->exception(function () use ($testedInstance) {
          $testedInstance->deleteItem('User', '', []); // empty array
-      })->hasMessage("a key named 'id' to identify the item is mandatory");
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'id' to identify the item"));
 
       $this->exception(function () use ($testedInstance) {
          $testedInstance->deleteItem('User', '', [[]]); // array with invalid sub-array.
-      })->hasMessage("a key named 'id' to identify the item is mandatory");
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',"'id' to identify the item"));
 
       // check for bad request code
       $response = $testedInstance->deleteItem('User', -1);
@@ -388,17 +389,17 @@ class ItemHandler extends BaseTestCase {
       // check for invalid itemType name
       $this->exception(function () use ($testedInstance) {
          $testedInstance->LoremIpsum('read', []);
-      })->hasMessage("EndPoint 'LoremIpsum' is not valid, resource not found or not an instance of CommonDBTM");
+      })->hasMessage("EndPoint 'LoremIpsum' is not valid. " . ErrorHandler::getMessage('ERROR_RESOURCE_NOT_FOUND_NOR_COMMONDBTM'));
 
       // check for invalid method name
       $this->exception(function () use ($testedInstance) {
          $testedInstance->User('loremIpsum', []);
-      })->hasMessage("The method 'loremIpsum' is not valid, please try again.");
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGUMENTS'));
 
       // check for missing arguments
       $this->exception(function () use ($testedInstance) {
          $testedInstance->User('read');
-      })->hasMessage("The method 'loremIpsum' is not valid, please try again.");
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGUMENTS'));
 
       // check for missing arguments
       $response = $testedInstance->User('read', 2);

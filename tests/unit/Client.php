@@ -27,6 +27,7 @@
 
 namespace Glpi\Api\Rest\tests\units;
 
+use Glpi\Api\Rest\ErrorHandler;
 use Glpi\Api\Rest\tests\BaseTestCase;
 use GuzzleHttp\Psr7\Response;
 
@@ -44,7 +45,7 @@ class Client extends BaseTestCase {
       // Test invalid credentials
       $this->exception(function () use ($client) {
          $client->initSessionByCredentials('glpi', 'bad password');
-      })->hasMessage('Cannot connect to api');
+      })->hasMessage(ErrorHandler::getMessage('ERROR_GLPI_LOGIN'));
 
       // Test valid credentials
       $success = $client->initSessionByCredentials('glpi', 'glpi');
@@ -53,7 +54,7 @@ class Client extends BaseTestCase {
       // Test invalid credentials for user token
       $this->exception(function () use ($client) {
          $client->initSessionByUserToken('loremIpsum');
-      })->hasMessage('Cannot connect to api');
+      })->hasMessage(ErrorHandler::getMessage('ERROR_LOGIN_PARAMETERS_MISSING'));
 
       // TODO: Test valid credentials for user token
       /*$response = $client->initSessionByUserToken('loremIpsum');
@@ -81,7 +82,7 @@ class Client extends BaseTestCase {
       // Test invalid kill session
       $this->exception(function () use ($client) {
          $client->killSession();
-      })->hasMessage('session_token seems invalid');
+      })->hasMessage(ErrorHandler::getMessage('ERROR_SESSION_TOKEN_INVALID'));
    }
 
 
@@ -109,11 +110,11 @@ class Client extends BaseTestCase {
       // check for missing params request
       $this->exception(function () use ($mockedClient) {
          $mockedClient->lostPassword('lorem@ipsum.test', 'lorem');
-      })->hasMessage('The recovery and new password are mandatory');
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGUMENTS'));
 
       $this->exception(function () use ($mockedClient) {
          $mockedClient->lostPassword('lorem@ipsum.test', '', 'lorem');
-      })->hasMessage('The recovery and new password are mandatory');
+      })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGUMENTS'));
 
       // as we can't check for the email message let's mock the response.
       $messages = [
