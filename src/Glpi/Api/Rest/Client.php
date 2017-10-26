@@ -29,7 +29,6 @@ namespace Glpi\Api\Rest;
 
 use GuzzleHttp\Client as HttpClient;
 use Exception;
-use Glpi\Api\Rest\Exception\BadEndpointException;
 use Glpi\Api\Rest\Exception\InsufficientArgumentsException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
@@ -73,7 +72,8 @@ class Client {
       $response = $this->request('get', 'initSession', ['auth' => [$user, $password]]);
       if ($response->getStatusCode() != 200
          || !$this->sessionToken = json_decode($response->getBody()->getContents(), true)['session_token']) {
-         throw new Exception("Cannot connect to api");
+         $body = json_decode($response->getBody()->getContents());
+         throw new Exception(ErrorHandler::getMessage($body[0]));
       }
       return true;
    }
@@ -91,7 +91,8 @@ class Client {
       $response = $this->request('get', 'initSession', ['Authorization' => "user_token $userToken"]);
       if ($response->getStatusCode() != 200
          || !$this->sessionToken = json_decode($response->getBody()->getContents(), true)['session_token']) {
-         throw new Exception("Cannot connect to api");
+         $body = json_decode($response->getBody()->getContents());
+         throw new Exception(ErrorHandler::getMessage($body[0]));
       }
       return true;
    }
@@ -104,7 +105,8 @@ class Client {
    public function killSession() {
       $response = $this->request('get', 'killSession');
       if ($response->getStatusCode() != 200) {
-         throw new Exception('session_token seems invalid');
+         $body = json_decode($response->getBody()->getContents());
+         throw new Exception(ErrorHandler::getMessage($body[0]));
       }
       return true;
    }
@@ -193,7 +195,7 @@ class Client {
    public function lostPassword($email, $recoveryToken = '', $newPassword = '') {
       $params['email'] = $email;
       if (($recoveryToken && !$newPassword) || (!$recoveryToken && $newPassword)) {
-         throw new InsufficientArgumentsException('The recovery and new password are mandatory');
+         throw new InsufficientArgumentsException(ErrorHandler::getMessage('ERROR_APILIB_ARGUMENTS'));
       }
       if ($recoveryToken && $newPassword) {
          $params['password_forget_token'] = $recoveryToken;
