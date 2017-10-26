@@ -124,7 +124,7 @@ class ItemHandler {
    public function getMultipleItems(array $items, array $queryString = []) {
       foreach ($items as $item) {
          if (!key_exists('itemtype', $item) || !key_exists('items_id', $item)) {
-            throw new InsufficientArgumentsException("'itemtype' and 'items_id' are mandatory");
+            throw new InsufficientArgumentsException(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY', "'itemtype' and 'items_id'"));
          }
       }
       $options['query'] = array_merge($queryString, ['items' => $items]);
@@ -205,11 +205,11 @@ class ItemHandler {
    public function updateItem($itemType, $id, array $queryString) {
       if (!$id) {
          if (!$queryString) {
-            throw new InsufficientArgumentsException("a key named 'id' to identify the item is mandatory");
+            throw new InsufficientArgumentsException(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY', "'id' to identify the item"));
          }
          foreach ($queryString as $item) {
             if (is_array($item) && !array_key_exists('id', $item)) {
-               throw new InsufficientArgumentsException("a key named 'id' to identify the item is mandatory");
+               throw new InsufficientArgumentsException(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY', "'id' to identify the item"));
             }
          }
       }
@@ -232,11 +232,11 @@ class ItemHandler {
       $options = [];
       if (!$id) {
          if (!$inputValues) {
-            throw new InsufficientArgumentsException("a key named 'id' to identify the item is mandatory");
+            throw new InsufficientArgumentsException(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY', "'id' to identify the item"));
          }
          foreach ($inputValues as $item) {
             if (is_array($item) && !array_key_exists('id', $item)) {
-               throw new InsufficientArgumentsException("a key named 'id' to identify the item is mandatory");
+               throw new InsufficientArgumentsException(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY', "'id' to identify the item"));
             }
          }
          $options['body'] = json_encode(['input' => $inputValues]);
@@ -270,8 +270,8 @@ class ItemHandler {
    public function __call($name, $arguments) {
       $name = ucfirst($name);
 
-      if (func_num_args() < 2) {
-         throw new InsufficientArgumentsException();
+      if (count($arguments) < 2) {
+         throw new InsufficientArgumentsException(ErrorHandler::getMessage('ERROR_APILIB_ARGUMENTS'));
       }
 
       $method = strtolower($arguments[0]);
@@ -292,12 +292,12 @@ class ItemHandler {
             $result = $this->deleteItem($name, '', $input, $params);
             break;
          default:
-            throw new InvalidArgumentException("The method '{$method}' is not valid, please try again.");
+            throw new InvalidArgumentException(ErrorHandler::getMessage('ERROR_APILIB_ARGUMENTS'));
             break;
       }
       $body = json_decode($result['body']);
       if ($result['statusCode'] == 400 && $body[0] == 'ERROR_RESOURCE_NOT_FOUND_NOR_COMMONDBTM') {
-         throw new BadEndpointException("EndPoint '{$name}' is not valid, ". $body[1]);
+         throw new BadEndpointException("EndPoint '{$name}' is not valid. " . ErrorHandler::getMessage($body[0]));
       }
       return $result;
    }
