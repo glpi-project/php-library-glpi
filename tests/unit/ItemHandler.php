@@ -40,14 +40,14 @@ class ItemHandler extends BaseTestCase {
    }
 
    /**
-    * @tags testGetAnItem
+    * @tags testGetItem
     */
-   public function testGetAnItem() {
+   public function testGetItem() {
       $this->newTestedInstance($this->client);
 
       // check for valid returned data
       $userId = 2;
-      $response = $this->testedInstance->getAnItem('User', $userId);
+      $response = $this->testedInstance->getItem('User', $userId);
       $this->assertJsonResponse($response);
       $stdClass = json_decode($response['body']);
       $this->object($stdClass)
@@ -55,11 +55,11 @@ class ItemHandler extends BaseTestCase {
          ->array($stdClass->links)->isNotEmpty();
 
       // check for invalid item
-      $response = $this->testedInstance->getAnItem('LoremIpsum', $userId);
+      $response = $this->testedInstance->getItem('LoremIpsum', $userId);
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
 
       // check for valid query param
-      $response = $this->testedInstance->getAnItem('User', $userId, ['expand_dropdowns' => true]);
+      $response = $this->testedInstance->getItem('User', $userId, ['expand_dropdowns' => true]);
       $this->assertJsonResponse($response);
       $stdClass = json_decode($response['body']);
       $this->object($stdClass)
@@ -354,7 +354,7 @@ class ItemHandler extends BaseTestCase {
       $userId = $usersCreated[0]->id;
       $response = $testedInstance->deleteItem('User', $userId, [], ['force_purge' => true]);
       $this->assertJsonResponse($response);
-      $response = $testedInstance->getAnItem('User', $userId);
+      $response = $testedInstance->getItem('User', $userId);
       $this->assertJsonResponse($response, parent::HTTP_NOT_FOUND);
 
       // check for bulk deletion
@@ -381,7 +381,7 @@ class ItemHandler extends BaseTestCase {
       $items = [['id' => $userId], ['id' => $usersCreated[2]->id],];
       $response = $testedInstance->deleteItem('User', '', $items, ['force_purge' => true]);
       $this->assertJsonResponse($response);
-      $response = $testedInstance->getAnItem('User', $userId);
+      $response = $testedInstance->getItem('User', $userId);
       $this->assertJsonResponse($response, parent::HTTP_NOT_FOUND);
    }
 

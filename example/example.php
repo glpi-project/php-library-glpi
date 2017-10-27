@@ -48,7 +48,7 @@ foreach ($profiles->myprofiles as $profile) {
 
 // Let's work with item types
 $itemHandler = new \Glpi\Api\Rest\ItemHandler($client);
-$response = $itemHandler->getAnItem('User', 2);
+$response = $itemHandler->getItem('User', 2);
 $bodyDecoded = json_decode($response['body']);
 if ($response['statusCode'] == 404) {
    // User not found

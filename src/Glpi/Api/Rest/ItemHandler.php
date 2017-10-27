@@ -394,7 +394,7 @@ class ItemHandler {
     * @param array $queryString
     * @return array
     */
-   public function getAnItem($itemType, $id, array $queryString = []) {
+   public function getItem($itemType, $id, array $queryString = []) {
       $options = [];
       if ($queryString) {
          $options['query'] = $queryString;
@@ -621,7 +621,7 @@ class ItemHandler {
             $result = $this->addItem($name, $input);
             break;
          case 'read':
-            $result = $this->getAnItem($name, (int)$input, $params);
+            $result = $this->getItem($name, (int)$input, $params);
             break;
          case 'update':
             $result = $this->updateItem($name, '', $input);

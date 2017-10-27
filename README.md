@@ -77,7 +77,7 @@ try {
 
 // do something
 $itemHandler = new \Glpi\Api\Rest\ItemHandler($client);
-$response = $itemHandler->getAnItem('User', 2);
+$response = $itemHandler->getItem('User', 2);
 $user = json_decode($response['body']);
 echo "User name: " . $user->name . "\n";
 ```
