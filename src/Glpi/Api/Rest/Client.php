@@ -47,8 +47,8 @@ class Client {
    /** @var string Session token obtained after initSession() */
    private $sessionToken = null;
 
-   public function __construct($url) {
-      $this->httpClient = new HttpClient();
+   public function __construct($url, HttpClient $httpClient) {
+      $this->httpClient = $httpClient;
       $this->url = trim($url, '/') . '/';
    }
 
