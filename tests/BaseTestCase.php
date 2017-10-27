@@ -79,12 +79,16 @@ class BaseTestCase extends atoum {
 
    /**
     * @param integer $httpStatusCode
-    * @param string $messages
+    * @param string $body
+    * @param array $extraHeaders
     * @return Response
     */
-   protected function changeMockedResponse($httpStatusCode, $messages) {
-      return new Response($httpStatusCode,
-         ['Content-Type' => 'application/json; charset=UTF-8'],
-         json_encode([$messages]));
+   protected function mockedResponse($httpStatusCode, $body = '', $extraHeaders = []) {
+      $headers = ['Content-Type' => 'application/json; charset=UTF-8'];
+      if ($extraHeaders) {
+         $headers = array_merge($headers, $extraHeaders);
+      }
+      $body = ($body) ? json_encode($body) : '';
+      return new Response($httpStatusCode, $headers, $body);
    }
 }
