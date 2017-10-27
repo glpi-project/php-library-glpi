@@ -124,14 +124,14 @@ class Client extends BaseTestCase {
       ];
 
       // check for "valid" request for email notification
-      $mockedClient->getMockController()->request = $this->changeMockedResponse(parent::HTTP_OK,
+      $mockedClient->getMockController()->request = $this->mockedResponse(parent::HTTP_OK,
          $messages['emailSentMessage']);
       $response = $mockedClient->lostPassword('lorem@ipsum.test');
       $this->assertJsonResponse($response);
       $this->string(json_decode($response['body'])[0])->isEqualTo($messages['emailSentMessage']);
 
       // check for "invalid" request for reset password
-      $mockedClient->getMockController()->request = $this->changeMockedResponse(parent::HTTP_BAD_REQUEST,
+      $mockedClient->getMockController()->request = $this->mockedResponse(parent::HTTP_BAD_REQUEST,
          $messages['invalidTokenMessage']);
       $response = $mockedClient->lostPassword('lorem@ipsum.test', 'invalidToken',
          'newFakePassword');
@@ -139,7 +139,7 @@ class Client extends BaseTestCase {
       $this->string(json_decode($response['body'])[0])->isEqualTo($messages['invalidTokenMessage']);
 
       // check for "valid" request for reset password
-      $mockedClient->getMockController()->request = $this->changeMockedResponse(parent::HTTP_OK,
+      $mockedClient->getMockController()->request = $this->mockedResponse(parent::HTTP_OK,
          $messages['successMessage']);
       $response = $mockedClient->lostPassword('lorem@ipsum.test', 'm0ck3dT0k3n', 'newFakePassword');
       $this->assertJsonResponse($response);
