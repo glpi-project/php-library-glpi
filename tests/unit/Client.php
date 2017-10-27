@@ -29,18 +29,23 @@ namespace Glpi\Api\Rest\tests\units;
 
 use Glpi\Api\Rest\ErrorHandler;
 use Glpi\Api\Rest\tests\BaseTestCase;
-use GuzzleHttp\Psr7\Response;
 
 /**
  * @engine inline
  */
 class Client extends BaseTestCase {
 
+   private $httpClient;
+
+   public function setUp() {
+      $this->httpClient = new \GuzzleHttp\Client();
+   }
+
    /**
     * @tags testInitSession
     */
    public function testInitSession() {
-      $client = $this->newTestedInstance(GLPI_URL);
+      $client = $this->newTestedInstance(GLPI_URL, $this->httpClient);
 
       // Test invalid credentials
       $this->exception(function () use ($client) {
@@ -56,9 +61,14 @@ class Client extends BaseTestCase {
          $client->initSessionByUserToken('loremIpsum');
       })->hasMessage(ErrorHandler::getMessage('ERROR_LOGIN_PARAMETERS_MISSING'));
 
-      // TODO: Test valid credentials for user token
-      /*$response = $client->initSessionByUserToken('loremIpsum');
-      $this->boolean($success)->isTrue();*/
+      // Test valid credentials for user token
+      $usertoken = '10r3mIp5umT0k3n';
+      $mocked = $this->newMockInstance('Glpi\Api\Rest\Client', null, null,
+         [GLPI_URL, $this->httpClient]);
+      $mocked->getMockController()->request = $this->mockedResponse(parent::HTTP_OK,
+         ['session_token' => '' . $usertoken . '']);
+      $success = $mocked->initSessionByUserToken($usertoken);
+      $this->boolean($success)->isTrue();
    }
 
    /**
@@ -101,7 +111,8 @@ class Client extends BaseTestCase {
     * @tags testLostPassword
     */
    public function testLostPassword() {
-      $mockedClient = new \mock\Glpi\Api\Rest\Client(GLPI_URL);
+      $mockedClient = $this->newMockInstance('Glpi\Api\Rest\Client', null, null,
+         [GLPI_URL, $this->httpClient]);
 
       // check for bad request
       $response = $mockedClient->lostPassword('lorem@ipsum.test');
@@ -125,14 +136,14 @@ class Client extends BaseTestCase {
 
       // check for "valid" request for email notification
       $mockedClient->getMockController()->request = $this->mockedResponse(parent::HTTP_OK,
-         $messages['emailSentMessage']);
+         [$messages['emailSentMessage']]);
       $response = $mockedClient->lostPassword('lorem@ipsum.test');
       $this->assertJsonResponse($response);
       $this->string(json_decode($response['body'])[0])->isEqualTo($messages['emailSentMessage']);
 
       // check for "invalid" request for reset password
       $mockedClient->getMockController()->request = $this->mockedResponse(parent::HTTP_BAD_REQUEST,
-         $messages['invalidTokenMessage']);
+         [$messages['invalidTokenMessage']]);
       $response = $mockedClient->lostPassword('lorem@ipsum.test', 'invalidToken',
          'newFakePassword');
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
@@ -140,7 +151,7 @@ class Client extends BaseTestCase {
 
       // check for "valid" request for reset password
       $mockedClient->getMockController()->request = $this->mockedResponse(parent::HTTP_OK,
-         $messages['successMessage']);
+         [$messages['successMessage']]);
       $response = $mockedClient->lostPassword('lorem@ipsum.test', 'm0ck3dT0k3n', 'newFakePassword');
       $this->assertJsonResponse($response);
       $this->string(json_decode($response['body'])[0])->isEqualTo($messages['successMessage']);
