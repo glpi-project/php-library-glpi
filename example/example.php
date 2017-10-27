@@ -30,7 +30,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$client = new \Glpi\Api\Rest\Client('http://localhost/glpi/apirest.php/');
+$client = new \Glpi\Api\Rest\Client('http://localhost/glpi/apirest.php/', new GuzzleHttp\Client());
 
 try {
    // try to do login
