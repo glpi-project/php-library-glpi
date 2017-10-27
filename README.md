@@ -37,7 +37,7 @@ This library specifically designed for PHP, features several functionalities com
 * Media download/upload
 * Batching.
 
-You will be able to call to all the methods that belong to the [GLPI REST API](https://dev.flyve.org/glpi/apirest.php), for more information visit the [project's website](https://glpi-project.github.io/php-library-glpi/).
+You will be able to call to all the methods that belong to the [GLPI REST API](https://github.com/glpi-project/glpi/blob/master/apirest.md), for more information visit the [project's website](https://glpi-project.github.io/php-library-glpi/).
 
 ## Build Status
 
@@ -54,7 +54,7 @@ You will be able to call to all the methods that belong to the [GLPI REST API](h
 ## Installation
 
 ```shell
-composer require glpi-project/rest-api-client
+composer require glpi-project/php-library-glpi
 ```
 
 ## Code examples
@@ -84,13 +84,13 @@ echo "User name: " . $user->name . "\n";
 
 ## Documentation
 
-We maintain a detailed documentation of the project in the [project's website](https://glpi-project.github.io/php-library-glpi/).
+We maintain a detailed documentation of the project on the [website](https://glpi-project.github.io/php-library-glpi/).
 
 ## Versioning
 
-In order to provide transparency on our release cycle and to maintain backward compatibility, Flyve MDM is maintained under [the Semantic Versioning guidelines](http://semver.org/). We are committed to following and complying with the rules, the best we can.
+In order to provide transparency on our release cycle and to maintain backward compatibility, GLPI is maintained under [the Semantic Versioning guidelines](http://semver.org/). We are committed to following and complying with the rules, the best we can.
 
-See [the tags section of our GitHub project](https://github.com/glpi-project/php-library-glpi/tags) for changelogs for each release version of Flyve MDM. Release announcement posts on [the official Teclib' blog](http://www.teclib-edition.com/en/communities/blog-posts/) contain summaries of the most noteworthy changes made in each release.
+See [the tags section of our GitHub project](https://github.com/glpi-project/php-library-glpi/tags) for changelogs for each release version. Release announcement posts on [the official Teclib' blog](http://www.teclib-edition.com/en/communities/blog-posts/) contain summaries of the most noteworthy changes made in each release.
 
 ## Contact
 
