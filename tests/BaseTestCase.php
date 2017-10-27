@@ -61,7 +61,7 @@ class BaseTestCase extends atoum {
     * login via api with super user privileges
     */
    public function loginSuperAdmin() {
-      $this->client = new Client(GLPI_URL);
+      $this->client = new Client(GLPI_URL, new \GuzzleHttp\Client());
       $this->client->initSessionByCredentials('glpi', 'glpi');
    }
 
