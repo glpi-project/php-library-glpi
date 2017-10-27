@@ -63,7 +63,7 @@ It's easy to implement, as you see in the following example:
 
 ```php
 // Instanciate the API client
-$client = new Glpi\Api\Rest\Client('http://localhost/glpi/apirest.php/');
+$client = new Glpi\Api\Rest\Client('http://localhost/glpi/apirest.php/', new GuzzleHttp\Client());
 
 // Authenticate
 try {
