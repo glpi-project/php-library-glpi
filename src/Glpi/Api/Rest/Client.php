@@ -182,7 +182,25 @@ class Client {
    }
 
    /**
-    * Allows to request password recovery and password reset.
+    * Allows to request password recovery.
+    * This endpoint works under the following conditions:
+    *  - GLPI has notifications enabled
+    *  - The email address of the user belongs to a user account.
+    *
+    * @param string $email
+    * @return array
+    */
+   public function recoveryPassword($email) {
+      $options['body'] = json_encode($params['email'] = $email);
+      $response = $this->request('put', 'lostPassword', $options);
+      return [
+         'statusCode' => $response->getStatusCode(),
+         'body' => $response->getBody()->getContents(),
+      ];
+   }
+
+   /**
+    * Allows to request a password reset.
     * This endpoint works under the following conditions:
     *  - GLPI has notifications enabled
     *  - The email address of the user belongs to a user account.
@@ -192,16 +210,15 @@ class Client {
     * @param string $newPassword
     * @return array
     */
-   public function lostPassword($email, $recoveryToken = '', $newPassword = '') {
-      $params['email'] = $email;
+   public function resetPassword($email, $recoveryToken, $newPassword) {
       if (($recoveryToken && !$newPassword) || (!$recoveryToken && $newPassword)) {
          throw new InsufficientArgumentsException(ErrorHandler::getMessage('ERROR_APILIB_ARGUMENTS'));
       }
-      if ($recoveryToken && $newPassword) {
-         $params['password_forget_token'] = $recoveryToken;
-         $params['password'] = $newPassword;
-      }
-      $options['body'] = json_encode($params);
+      $options['body'] = json_encode([
+         'email' => $email,
+         'password_forget_token' => $recoveryToken,
+         'password' => $newPassword,
+      ]);
       $response = $this->request('put', 'lostPassword', $options);
       return [
          'statusCode' => $response->getStatusCode(),
