@@ -114,7 +114,7 @@ class ItemHandler extends BaseTestCase {
       // Let's ensure than exists at least one simple subItem
       $userId = 2;
       $testEmail = 'get.sub@item.test';
-      $testedInstance->addItem('UserEmail', ['users_id' => $userId, 'email' => $testEmail]);
+      $testedInstance->addItems('UserEmail', ['users_id' => $userId, 'email' => $testEmail]);
 
       // check for valid returned data
       $response = $this->testedInstance->getSubItems('User', $userId, 'UserEmail');
@@ -209,20 +209,20 @@ class ItemHandler extends BaseTestCase {
    }
 
    /**
-    * @tags testUpdateItem
+    * @tags testUpdateItems
     */
-   public function testUpdateItem() {
+   public function testUpdateItems() {
       $this->newTestedInstance($this->client);
       $testedInstance = $this->testedInstance;
 
       // check for bad request code
-      $response = $testedInstance->updateItem('Lorem', 1, ['name' => 'glpi']);
+      $response = $testedInstance->updateItems('Lorem', 1, ['name' => 'glpi']);
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
 
       // check for update one item
       $userId = 2;
       $items = ['phone' => '555123'];
-      $response = $testedInstance->updateItem('User', $userId, $items);
+      $response = $testedInstance->updateItems('User', $userId, $items);
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
       $this->given($arrayOfStdClass)
@@ -233,18 +233,18 @@ class ItemHandler extends BaseTestCase {
 
       // check for missing id
       $this->exception(function () use ($testedInstance) {
-         $testedInstance->updateItem('User', '', []); // empty array
+         $testedInstance->updateItems('User', '', []); // empty array
       })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',
          "'id' to identify the item"));
 
       $this->exception(function () use ($testedInstance, $items) {
-         $testedInstance->updateItem('User', '', [$items]);
+         $testedInstance->updateItems('User', '', [$items]);
       })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',
          "'id' to identify the item"));
 
       // check for update multiple items
       $items = [['id' => $userId, 'phone' => '555123'], ['id' => 3, 'phone' => '555123']];
-      $response = $testedInstance->updateItem('User', '', $items);
+      $response = $testedInstance->updateItems('User', '', $items);
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
       $this->given($arrayOfStdClass)
@@ -255,24 +255,24 @@ class ItemHandler extends BaseTestCase {
 
       // check for a multi-status code
       $items = [['id' => $userId, 'phone' => '555123'], ['id' => 0, 'phone' => '555123']];
-      $response = $testedInstance->updateItem('User', '', $items);
+      $response = $testedInstance->updateItems('User', '', $items);
       $this->assertJsonResponse($response, parent::HTTP_MULTI_STATUS);
    }
 
    /**
-    * @tags testAddItem
+    * @tags testAddItems
     */
-   public function testAddItem() {
+   public function testAddItems() {
       $this->newTestedInstance($this->client);
       $testedInstance = $this->testedInstance;
 
       // check for bad request code
-      $response = $testedInstance->addItem('Lorem', []);
+      $response = $testedInstance->addItems('Lorem', []);
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
 
       // check for single add
       $items = ['name' => 'add-me', 'password' => 'P455w0rd'];
-      $response = $testedInstance->addItem('User', $items);
+      $response = $testedInstance->addItems('User', $items);
       $this->assertJsonResponse($response, parent::HTTP_CREATED);
       $this->given($response)
          ->boolean(key_exists('location', $response))->isTrue()
@@ -285,7 +285,7 @@ class ItemHandler extends BaseTestCase {
          ['name' => 'add-me-1', 'password' => 'P455w0rd'],
          ['name' => 'add-me-2', 'password' => 'P455w0rd'],
       ];
-      $response = $testedInstance->addItem('User', $items);
+      $response = $testedInstance->addItems('User', $items);
       $this->assertJsonResponse($response, parent::HTTP_CREATED);
       $arrayOfStdClass = json_decode($response['body']);
       $this->given($arrayOfStdClass)
@@ -304,7 +304,7 @@ class ItemHandler extends BaseTestCase {
          ['users_id' => -1, 'email' => 'lorem@ipsum.test'],
          ['users_id' => 2, 'email' => 'lorem@ipsum.test'],
       ];
-      $response = $testedInstance->addItem('UserEmail', $items);
+      $response = $testedInstance->addItems('UserEmail', $items);
       $this->assertJsonResponse($response, parent::HTTP_MULTI_STATUS);
       $arrayOfStdClass = json_decode($response['body']);
       $this->given($arrayOfStdClass)
@@ -312,29 +312,29 @@ class ItemHandler extends BaseTestCase {
    }
 
    /**
-    * @tags testDeleteItem
+    * @tags testDeleteItems
     */
-   public function testDeleteItem() {
+   public function testDeleteItems() {
       $this->newTestedInstance($this->client);
       $testedInstance = $this->testedInstance;
 
       // check for missing id
       $this->exception(function () use ($testedInstance) {
-         $testedInstance->deleteItem('User', '', []); // empty array
+         $testedInstance->deleteItems('User', '', []); // empty array
       })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',
          "'id' to identify the item"));
 
       $this->exception(function () use ($testedInstance) {
-         $testedInstance->deleteItem('User', '', [[]]); // array with invalid sub-array.
+         $testedInstance->deleteItems('User', '', [[]]); // array with invalid sub-array.
       })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY',
          "'id' to identify the item"));
 
       // check for bad request code
-      $response = $testedInstance->deleteItem('User', -1);
+      $response = $testedInstance->deleteItems('User', -1);
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
 
       // Let's create first the tested data
-      $response = $testedInstance->addItem('User', [
+      $response = $testedInstance->addItems('User', [
          ['name' => 'delete-me-forced', 'password' => 'P455w0rd'],
          ['name' => 'delete-me-1', 'password' => 'P455w0rd'],
          ['name' => 'delete-me-2', 'password' => 'P455w0rd'],
@@ -343,7 +343,7 @@ class ItemHandler extends BaseTestCase {
 
       // check for delete one item
       $userId = $usersCreated[0]->id;
-      $response = $testedInstance->deleteItem('User', $userId);
+      $response = $testedInstance->deleteItems('User', $userId);
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
       $this->given($arrayOfStdClass)
@@ -352,7 +352,7 @@ class ItemHandler extends BaseTestCase {
 
       // check for optional params
       $userId = $usersCreated[0]->id;
-      $response = $testedInstance->deleteItem('User', $userId, [], ['force_purge' => true]);
+      $response = $testedInstance->deleteItems('User', $userId, [], ['force_purge' => true]);
       $this->assertJsonResponse($response);
       $response = $testedInstance->getItem('User', $userId);
       $this->assertJsonResponse($response, parent::HTTP_NOT_FOUND);
@@ -360,7 +360,7 @@ class ItemHandler extends BaseTestCase {
       // check for bulk deletion
       $userId = $usersCreated[1]->id;
       $items = [['id' => $userId], ['id' => $usersCreated[2]->id],];
-      $response = $testedInstance->deleteItem('User', '', $items);
+      $response = $testedInstance->deleteItems('User', '', $items);
       $this->assertJsonResponse($response);
       $arrayOfStdClass = json_decode($response['body']);
       $this->given($arrayOfStdClass)
@@ -370,7 +370,7 @@ class ItemHandler extends BaseTestCase {
       // check for partial deletion
       $userId = -1;
       $items = [['id' => $userId], ['id' => $usersCreated[2]->id],];
-      $response = $testedInstance->deleteItem('User', '', $items);
+      $response = $testedInstance->deleteItems('User', '', $items);
       $this->assertJsonResponse($response, parent::HTTP_MULTI_STATUS);
       $arrayOfStdClass = json_decode($response['body']);
       $this->given($arrayOfStdClass)
@@ -379,7 +379,7 @@ class ItemHandler extends BaseTestCase {
       // check for bulk deletion with extra params
       $userId = $usersCreated[1]->id;
       $items = [['id' => $userId], ['id' => $usersCreated[2]->id],];
-      $response = $testedInstance->deleteItem('User', '', $items, ['force_purge' => true]);
+      $response = $testedInstance->deleteItems('User', '', $items, ['force_purge' => true]);
       $this->assertJsonResponse($response);
       $response = $testedInstance->getItem('User', $userId);
       $this->assertJsonResponse($response, parent::HTTP_NOT_FOUND);

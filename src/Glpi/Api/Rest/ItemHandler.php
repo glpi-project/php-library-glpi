@@ -524,7 +524,7 @@ class ItemHandler {
     * @param array $queryString
     * @return array
     */
-   public function addItem($itemType, array $queryString) {
+   public function addItems($itemType, array $queryString) {
       $options['body'] = json_encode(['input' => $queryString]);
       $response = $this->client->request('post', $itemType . '/', $options);
       $location = $response->getHeader('location');
@@ -544,7 +544,7 @@ class ItemHandler {
     * @param array $queryString
     * @return array
     */
-   public function updateItem($itemType, $id, array $queryString) {
+   public function updateItems($itemType, $id, array $queryString) {
       if (!$id) {
          if (!$queryString) {
             throw new InsufficientArgumentsException(ErrorHandler::getMessage('ERROR_APILIB_ARGS_MANDATORY', "'id' to identify the item"));
@@ -571,7 +571,7 @@ class ItemHandler {
     * @param array $queryString
     * @return array
     */
-   public function deleteItem($itemType, $id, array $inputValues = [], array $queryString = []) {
+   public function deleteItems($itemType, $id, array $inputValues = [], array $queryString = []) {
       $options = [];
       if (!$id) {
          if (!$inputValues) {
