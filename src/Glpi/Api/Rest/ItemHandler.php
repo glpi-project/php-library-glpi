@@ -560,6 +560,7 @@ class ItemHandler {
    }
 
    /**
+    * Delete an object
     * @param string $itemType
     * @param integer $id
     * @param array $inputValues
