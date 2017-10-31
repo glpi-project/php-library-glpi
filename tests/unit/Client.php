@@ -41,6 +41,7 @@ class Client extends BaseTestCase {
       'emailSentMessage' => 'An email has been sent to your email address.',
       'invalidTokenMessage' => 'Your password reset request has expired or is invalid.',
       'successMessage' => 'Reset password successful.',
+      'emailNotFound' => 'Email address not found.',
    ];
 
    public function setUp() {
@@ -117,17 +118,21 @@ class Client extends BaseTestCase {
     * @tags testRecoveryPassword
     */
    public function testRecoveryPassword() {
-      $mockedClient = $this->newMockInstance('Glpi\Api\Rest\Client', null, null,
-         [GLPI_URL, $this->httpClient]);
+      $httpClient = $this->newMockInstance('\GuzzleHttp\Client');
+      $httpClient->getMockController()->request = $this->mockedResponse(parent::HTTP_BAD_REQUEST,
+         ['ERROR', $this->mailMessages['emailNotFound']]);
+      $httpClient->getMockController()->request[2] = $this->mockedResponse(parent::HTTP_OK,
+         [$this->mailMessages['emailSentMessage']]);
+      $this->newTestedInstance(GLPI_URL, $httpClient);
+      $client = $this->testedInstance;
 
       // check for bad request
-      $response = $mockedClient->recoveryPassword('lorem@ipsum.test');
+      $response = $client->recoveryPassword('lorem@ipsum.test');
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
+      $this->string(json_decode($response['body'])[1])->isEqualTo($this->mailMessages['emailNotFound']);
 
       // check for "valid" request for email notification
-      $mockedClient->getMockController()->request = $this->mockedResponse(parent::HTTP_OK,
-         [$this->mailMessages['emailSentMessage']]);
-      $response = $mockedClient->recoveryPassword('lorem@ipsum.test');
+      $response = $client->recoveryPassword('lorem@ipsum.test');
       $this->assertJsonResponse($response);
       $this->string(json_decode($response['body'])[0])->isEqualTo($this->mailMessages['emailSentMessage']);
    }
@@ -136,30 +141,29 @@ class Client extends BaseTestCase {
     * @tags testResetPassword
     */
    public function testResetPassword() {
-      $mockedClient = $this->newMockInstance('Glpi\Api\Rest\Client', null, null,
-         [GLPI_URL, $this->httpClient]);
+      $httpClient = $this->newMockInstance('\GuzzleHttp\Client');
+      $httpClient->getMockController()->request = $this->mockedResponse(parent::HTTP_BAD_REQUEST,
+         ['ERROR', $this->mailMessages['invalidTokenMessage']]);
+      $httpClient->getMockController()->request[2] = $this->mockedResponse(parent::HTTP_OK,
+         [$this->mailMessages['successMessage']]);
+      $client = $this->newTestedInstance(GLPI_URL, $httpClient);
 
       // check for missing params request
-      $this->exception(function () use ($mockedClient) {
-         $mockedClient->resetPassword('lorem@ipsum.test', 'lorem');
+      $this->exception(function () use ($client) {
+         $client->resetPassword('lorem@ipsum.test', 'lorem', '');
       })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGUMENTS'));
 
-      $this->exception(function () use ($mockedClient) {
-         $mockedClient->resetPassword('lorem@ipsum.test', '', 'lorem');
+      $this->exception(function () use ($client) {
+         $client->resetPassword('lorem@ipsum.test', '', 'lorem');
       })->hasMessage(ErrorHandler::getMessage('ERROR_APILIB_ARGUMENTS'));
 
       // check for "invalid" request for reset password
-      $mockedClient->getMockController()->request = $this->mockedResponse(parent::HTTP_BAD_REQUEST,
-         [$this->mailMessages['invalidTokenMessage']]);
-      $response = $mockedClient->resetPassword('lorem@ipsum.test', 'invalidToken',
-         'newFakePassword');
+      $response = $client->resetPassword('lorem@ipsum.test', 'invalidToken', 'newFakePassword');
       $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
-      $this->string(json_decode($response['body'])[0])->isEqualTo($this->mailMessages['invalidTokenMessage']);
+      $this->string(json_decode($response['body'])[1])->isEqualTo($this->mailMessages['invalidTokenMessage']);
 
       // check for "valid" request for reset password
-      $mockedClient->getMockController()->request = $this->mockedResponse(parent::HTTP_OK,
-         [$this->mailMessages['successMessage']]);
-      $response = $mockedClient->resetPassword('lorem@ipsum.test', 'm0ck3dT0k3n', 'newFakePassword');
+      $response = $client->resetPassword('lorem@ipsum.test', 'm0ck3dT0k3n', 'newFakePassword');
       $this->assertJsonResponse($response);
       $this->string(json_decode($response['body'])[0])->isEqualTo($this->mailMessages['successMessage']);
    }
