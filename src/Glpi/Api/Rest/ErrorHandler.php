@@ -66,6 +66,6 @@ class ErrorHandler {
     * @return string
     */
    public static function getMessage($error, $args = null) {
-      return printf(self::errors[$error], $args);
+      return sprintf(self::errors[$error], $args);
    }
 }
