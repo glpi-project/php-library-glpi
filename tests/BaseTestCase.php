@@ -29,6 +29,9 @@ namespace Glpi\Api\Rest\tests;
 
 use atoum;
 use Glpi\Api\Rest\Client;
+use GuzzleHttp\Client as httpClient;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 
 class BaseTestCase extends atoum {
@@ -61,7 +64,7 @@ class BaseTestCase extends atoum {
     * login via api with super user privileges
     */
    public function loginSuperAdmin() {
-      $this->client = new Client(GLPI_URL, new \GuzzleHttp\Client());
+      $this->client = new Client(GLPI_URL, new httpClient());
       $this->client->initSessionByCredentials('glpi', 'glpi');
    }
 
@@ -81,14 +84,31 @@ class BaseTestCase extends atoum {
     * @param integer $httpStatusCode
     * @param string $body
     * @param array $extraHeaders
+    * @param bool $jsonEncoded
     * @return Response
     */
-   protected function mockedResponse($httpStatusCode, $body = '', $extraHeaders = []) {
-      $headers = ['Content-Type' => 'application/json; charset=UTF-8'];
+   protected function mockedResponse($httpStatusCode, $body = '', $extraHeaders = [], $jsonEncoded = true) {
+      $headers = [];
+      if ($jsonEncoded) {
+         $headers['Content-Type'] = 'application/json; charset=UTF-8';
+         $body = json_encode($body);
+      }
       if ($extraHeaders) {
          $headers = array_merge($headers, $extraHeaders);
       }
-      $body = ($body) ? json_encode($body) : '';
       return new Response($httpStatusCode, $headers, $body);
+   }
+
+   /**
+    * Creates a queue of responses for testing
+    * @see http://docs.guzzlephp.org/en/stable/testing.html
+    *
+    * @param array $queue of responses or exceptions
+    * @return httpClient
+    */
+   protected function mockedHttpClient(array $queue) {
+      $mock = new MockHandler($queue);
+      $httpClient = new httpClient(['handler' => new HandlerStack($mock)]);
+      return $httpClient;
    }
 }
