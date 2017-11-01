@@ -25,6 +25,8 @@
  * --------------------------------------------------------------------
  */
 
+global $CFG_GLPI, $PLUGIN_HOOKS;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 $glpiUrl = getenv('GLPI_URL'); // set this on .travis.yml
