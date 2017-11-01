@@ -168,4 +168,49 @@ class Client extends BaseTestCase {
       $this->string(json_decode($response['body'])[0])->isEqualTo($this->mailMessages['successMessage']);
    }
 
+   /**
+    * @tags testConnectionIssues
+    */
+   public function testConnectionIssues() {
+      $httpClient = $this->newMockInstance('\GuzzleHttp\Client');
+      $errors = [
+         ['ERROR', 'API disabled'],
+         [
+            'ERROR_NOT_ALLOWED_IP',
+            "There isn't an active api client matching your ip adress in the configuration (::1)",
+         ],
+         ["<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+         <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" 
+         \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"]
+      ];
+      $httpClient->getMockController()->request = $this->mockedResponse(parent::HTTP_INTERNAL_SERVER_ERROR,
+         $errors[0]);
+      $httpClient->getMockController()->request[1] = $this->mockedResponse(parent::HTTP_BAD_REQUEST,
+         $errors[1]);
+      $httpClient->getMockController()->request[2] = $this->mockedResponse(parent::HTTP_NOT_FOUND,
+         $errors[0], ['Content-Type' => 'text/html; charset=utf-8']);
+      $response = $this->newTestedInstance(GLPI_URL, $httpClient);
+      $client = $this->testedInstance;
+
+      // check for invalid IP access
+      $response = $client->request('get', '/someEndPoint/');
+      $this->given($response)
+         ->integer($response->getStatusCode())->isEqualTo(parent::HTTP_BAD_REQUEST)
+         ->json($contents = $response->getBody()->getContents())
+         ->string(json_decode($contents)[1])->isEqualTo($errors[1][1]);
+
+      // check for invalid URL access
+      $response = $client->request('get', 'http://bad.url/someEndPoint/');
+      $this->given($response)
+         ->integer($response->getStatusCode())->isEqualTo(parent::HTTP_NOT_FOUND)
+         ->string($response->getBody()->getContents())->isEqualTo($errors[2][0]);
+
+      // check for default value, api disabled
+      $response = $client->request('get', '/someEndPoint/');
+      $this->given($response)
+         ->integer($response->getStatusCode())->isEqualTo(parent::HTTP_INTERNAL_SERVER_ERROR)
+         ->json($contents = $response->getBody()->getContents())
+         ->string(json_decode($contents)[1])->isEqualTo($errors[0][1]);
+   }
+
 }
