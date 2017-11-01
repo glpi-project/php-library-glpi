@@ -118,11 +118,12 @@ class Client extends BaseTestCase {
     * @tags testRecoveryPassword
     */
    public function testRecoveryPassword() {
-      $httpClient = $this->newMockInstance('\GuzzleHttp\Client');
-      $httpClient->getMockController()->request = $this->mockedResponse(parent::HTTP_BAD_REQUEST,
-         ['ERROR', $this->mailMessages['emailNotFound']]);
-      $httpClient->getMockController()->request[2] = $this->mockedResponse(parent::HTTP_OK,
-         [$this->mailMessages['emailSentMessage']]);
+      $httpClient = $this->mockedHttpClient([
+         $this->mockedResponse(parent::HTTP_BAD_REQUEST,
+            ['ERROR', $this->mailMessages['emailNotFound']]),
+         $this->mockedResponse(parent::HTTP_OK,
+            [$this->mailMessages['emailSentMessage']]),
+      ]);
       $this->newTestedInstance(GLPI_URL, $httpClient);
       $client = $this->testedInstance;
 
@@ -141,11 +142,12 @@ class Client extends BaseTestCase {
     * @tags testResetPassword
     */
    public function testResetPassword() {
-      $httpClient = $this->newMockInstance('\GuzzleHttp\Client');
-      $httpClient->getMockController()->request = $this->mockedResponse(parent::HTTP_BAD_REQUEST,
-         ['ERROR', $this->mailMessages['invalidTokenMessage']]);
-      $httpClient->getMockController()->request[2] = $this->mockedResponse(parent::HTTP_OK,
-         [$this->mailMessages['successMessage']]);
+      $httpClient = $this->mockedHttpClient([
+         $this->mockedResponse(parent::HTTP_BAD_REQUEST,
+            ['ERROR', $this->mailMessages['invalidTokenMessage']]),
+         $this->mockedResponse(parent::HTTP_OK,
+            [$this->mailMessages['successMessage']]),
+      ]);
       $client = $this->newTestedInstance(GLPI_URL, $httpClient);
 
       // check for missing params request
@@ -172,45 +174,43 @@ class Client extends BaseTestCase {
     * @tags testConnectionIssues
     */
    public function testConnectionIssues() {
-      $httpClient = $this->newMockInstance('\GuzzleHttp\Client');
       $errors = [
-         ['ERROR', 'API disabled'],
-         [
+         'ERROR_API_DISABLED' => ['ERROR', 'API disabled'],
+         'ERROR_NOT_ALLOWED_IP' => [
             'ERROR_NOT_ALLOWED_IP',
             "There isn't an active api client matching your ip adress in the configuration (::1)",
          ],
-         ["<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-         <!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" 
-         \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"]
+         'ERROR_HTML' => "<h1>Object not found!</h1>",
       ];
-      $httpClient->getMockController()->request = $this->mockedResponse(parent::HTTP_INTERNAL_SERVER_ERROR,
-         $errors[0]);
-      $httpClient->getMockController()->request[1] = $this->mockedResponse(parent::HTTP_BAD_REQUEST,
-         $errors[1]);
-      $httpClient->getMockController()->request[2] = $this->mockedResponse(parent::HTTP_NOT_FOUND,
-         $errors[0], ['Content-Type' => 'text/html; charset=utf-8']);
-      $response = $this->newTestedInstance(GLPI_URL, $httpClient);
-      $client = $this->testedInstance;
+      $httpClient = $this->mockedHttpClient([
+         $this->mockedResponse(parent::HTTP_BAD_REQUEST,
+            $errors['ERROR_NOT_ALLOWED_IP']),
+         $this->mockedResponse(parent::HTTP_NOT_FOUND,
+            $errors['ERROR_HTML'], ['Content-Type' => 'text/html; charset=utf-8'], false),
+         $this->mockedResponse(parent::HTTP_INTERNAL_SERVER_ERROR,
+            $errors['ERROR_API_DISABLED']),
+      ]);
+      $this->newTestedInstance(GLPI_URL, $httpClient);
 
       // check for invalid IP access
-      $response = $client->request('get', '/someEndPoint/');
+      $response = $this->testedInstance->request('get', '/someEndPoint/');
       $this->given($response)
          ->integer($response->getStatusCode())->isEqualTo(parent::HTTP_BAD_REQUEST)
          ->json($contents = $response->getBody()->getContents())
-         ->string(json_decode($contents)[1])->isEqualTo($errors[1][1]);
+         ->string(json_decode($contents)[1])->isEqualTo($errors['ERROR_NOT_ALLOWED_IP'][1]);
 
       // check for invalid URL access
-      $response = $client->request('get', 'http://bad.url/someEndPoint/');
-      $this->given($response)
+      $response = $this->testedInstance->request('get', 'http://bad.url/someEndPoint/');$this->given($response)
          ->integer($response->getStatusCode())->isEqualTo(parent::HTTP_NOT_FOUND)
-         ->string($response->getBody()->getContents())->isEqualTo($errors[2][0]);
+         ->string($response->getHeaderLine('Content-Type'))->isEqualTo('text/html; charset=utf-8')
+         ->string($response->getBody()->getContents())->isEqualTo($errors['ERROR_HTML']);
 
       // check for default value, api disabled
-      $response = $client->request('get', '/someEndPoint/');
+      $response = $this->testedInstance->request('get', '/someEndPoint/');
       $this->given($response)
          ->integer($response->getStatusCode())->isEqualTo(parent::HTTP_INTERNAL_SERVER_ERROR)
          ->json($contents = $response->getBody()->getContents())
-         ->string(json_decode($contents)[1])->isEqualTo($errors[0][1]);
+         ->string(json_decode($contents)[1])->isEqualTo($errors['ERROR_API_DISABLED'][1]);
    }
 
 }
