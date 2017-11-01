@@ -19,14 +19,23 @@ img {
   max-width: 100% !important;
 }
 
-.jumbotron.theme-default {
-    background-color: #fff;
+.full-width-div {
+  margin-left: -10%;
+  width: 120%;
 }
-.jumbotron.theme-dark {
+
+.jumbotron {
+  .theme-dark {
     h3 {
-        padding-top: 0;
+      padding-top: 0;
     }
+  }
+
+  .theme-default {
+    background-color: #fff;
+  }
 }
+
 .article-wiki {
   margin-left: 40px;
 }
