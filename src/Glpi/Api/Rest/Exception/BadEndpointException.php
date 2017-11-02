@@ -27,5 +27,9 @@
 
 namespace Glpi\Api\Rest\Exception;
 
+/**
+ * Class BadEndpointException
+ * @package Glpi\Api\Rest\Exception
+ */
 class BadEndpointException extends \RuntimeException {
 }

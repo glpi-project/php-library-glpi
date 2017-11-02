@@ -27,5 +27,9 @@
 
 namespace Glpi\Api\Rest\Exception;
 
+/**
+ * Class InsufficientArgumentsException
+ * @package Glpi\Api\Rest\Exception
+ */
 class InsufficientArgumentsException extends \RuntimeException {
 }

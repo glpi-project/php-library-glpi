@@ -29,6 +29,9 @@ namespace Glpi\Api\Rest;
 
 class ErrorHandler {
 
+   /**
+    * List of messages
+    */
    const errors = [
       'ERROR_ITEM_NOT_FOUND' => "The desired resource (itemtype-id) was not found in the GLPI database.",
       'ERROR_BAD_ARRAY' => "The HTTP body must be an an array of objects.",
@@ -57,6 +60,11 @@ class ErrorHandler {
       'ERROR_APILIB_ARGS_MANDATORY' => "Missing mandatory param(s) %s.",
    ];
 
+   /**
+    * @param string $error
+    * @param null $args
+    * @return string
+    */
    public static function getMessage($error, $args = null) {
       return printf(self::errors[$error], $args);
    }
