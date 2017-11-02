@@ -28,6 +28,10 @@
 namespace Glpi\Api\Rest;
 
 
+/**
+ * Class EndPointHandler
+ * @package Glpi\Api\Rest
+ */
 class EndPointHandler {
 
    /**
@@ -35,6 +39,10 @@ class EndPointHandler {
     */
    protected $client;
 
+   /**
+    * EndPointHandler constructor.
+    * @param Client $client
+    */
    public function __construct(Client $client) {
       $this->client = $client;
    }

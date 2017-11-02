@@ -33,6 +33,10 @@ use Glpi\Api\Rest\Exception\InsufficientArgumentsException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 
+/**
+ * Class Client
+ * @package Glpi\Api\Rest
+ */
 class Client {
 
    /** @var HttpClient instance of the HTTP client */
@@ -47,6 +51,11 @@ class Client {
    /** @var string Session token obtained after initSession() */
    private $sessionToken = null;
 
+   /**
+    * Client constructor.
+    * @param string $url
+    * @param HttpClient $httpClient
+    */
    public function __construct($url, HttpClient $httpClient) {
       $this->httpClient = $httpClient;
       $this->url = trim($url, '/') . '/';
