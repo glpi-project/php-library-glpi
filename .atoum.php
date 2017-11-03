@@ -3,10 +3,13 @@
 use mageekguy\atoum\reports\coverage;
 use mageekguy\atoum\writers\std;
 
-$script->addDefaultReport();
+$branch = getenv('TRAVIS_BRANCH');
+if ($branch && in_array($branch, ['master', 'develop', 'fetaure/documentation'])) {
+   $script->addDefaultReport();
 
-$coverage = new coverage\html();
-$coverage->addWriter(new std\out());
-$coverage->setOutPutDirectory('build/tests/coverage');
+   $coverage = new coverage\html();
+   $coverage->addWriter(new std\out());
+   $coverage->setOutPutDirectory('build/tests/coverage');
 
-$runner->addReport($coverage);
+   $runner->addReport($coverage);
+}

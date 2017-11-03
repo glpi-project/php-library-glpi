@@ -8,8 +8,8 @@ env:
 
 before_script:
   - echo 'always_populate_raw_post_data = -1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-  - phpenv config-rm xdebug.ini || true
   - rm -f composer.lock
+  - wget -c http://get.sensiolabs.org/sami.phar -O "$HOME/bin/sami.phar"
   # let's clone and config GLPI for the client
   - git clone --depth=1 $GLPI_SOURCE $GLPI_ROOT_DIR && cd $GLPI_ROOT_DIR
   - composer install --no-dev --no-interaction
@@ -22,8 +22,12 @@ before_script:
   - cd $TRAVIS_BUILD_DIR && composer install --no-interaction
 
 script:
-  - vendor/bin/atoum --debug -bf tests/bootstrap.php -no-cc --max-children-number 1 -d tests/unit
+  - vendor/bin/atoum --debug -bf tests/bootstrap.php --max-children-number 1 -d tests/unit
   - if [[ "$CS" == "true" ]]; then vendor/bin/phpcs -p --standard=vendor/glpi-project/coding-standard/GlpiStandard/ src/ tests/; fi
+
+after_success:
+  # let's update the documentation
+  - if [[ "$CS" == "true" ]]; then .github/push_ghpages.sh; fi
 
 matrix:
   include:
@@ -39,6 +43,7 @@ matrix:
 cache:
   directories:
     - $HOME/.composer/cache
-    
+    - $HOME/bin
+
 notifications:
   webhooks: https://hooks.aethonan.pro/travisci/-1001061475099/
