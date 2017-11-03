@@ -1,21 +1,30 @@
 #!/bin/sh
+# please set the $GH_TOKEN in your travis dashboard
 
-setup_git() {
-  git config --global user.email "travis@travis-ci.org"
-  git config --global user.name "Travis CI"
-}
+if [ "$TRAVIS_BRANCH" = "master" ] || [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "fetaure/documentation" ]; then
+    # setup_git
+    git config --global user.email "deploy@travis-ci.org"
+    git config --global user.name "Deployment Bot"
+    git remote add origin-pages https://$GH_TOKEN@github.com/$TRAVIS_REPO_SLUG.git > /dev/null 2>&1
+    git fetch origin-pages
 
-commit_website_files() {
-  git checkout -b gh-pages
-  git add build/tests/coverage/*.html
-  git commit --message "Travis build: $TRAVIS_BUILD_NUMBER"
-}
+    # check if gh-pages exist in remote
+    if [ "git branch -r --list origin-pages/gh-pages" ]; then
+        # clean the repo and generate the docs
+        git checkout composer.lock
+        php $HOME/bin/sami.phar update $TRAVIS_BUILD_DIR/.github/samiConfig.php --force
 
-upload_files() {
-  git remote add origin-pages https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git > /dev/null 2>&1
-  git push --quiet --set-upstream origin-pages gh-pages 
-}
+        # commit_website_files
+        git add build/tests/coverage/*
+        git add build/docs/*
+        git checkout -b localCi
+        git commit -m "changes to be merged"
+        git checkout -b gh-pages origin-pages/gh-pages
+        git checkout localCi build/
 
-setup_git
-commit_website_files
-upload_files
+        # upload_files
+        git commit --message "docs(*): update code coverage and test result"
+        git rebase origin-pages/gh-pages
+        git push --quiet --set-upstream origin-pages gh-pages --force
+    fi
+fi
