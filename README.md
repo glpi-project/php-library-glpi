@@ -49,9 +49,15 @@ You will be able to call to all the methods that belong to the [GLPI REST API](h
 
 |**GLPI Version**|9.1.1|9.1.2|9.1.3|9.1.5|9.1.6|9.2.0|
 |:----|----|----|----|---|---|---|
-|**GLPI API Client**|||||||
+|**GLPI API Client**|1.x|1.x|1.x|1.x|1.x|1.x|
 
 ## Installation
+
+You will need the following minimum dependencies to use the library (composer will automatic check for the first two):
+
+* PHP >= 5.6.0
+* Guzzle >= 6.3
+* GLPI >= 9.1.1
 
 ```shell
 composer require glpi-project/php-library-glpi
