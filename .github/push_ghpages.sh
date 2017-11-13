@@ -1,8 +1,8 @@
 #!/bin/sh
 # please set the $GH_TOKEN in your travis dashboard
 
-if [ "$TRAVIS_BRANCH" = "master" ] || [ "$TRAVIS_BRANCH" = "develop" ]; then
-    # setup_git
+if [ "$TRAVIS_BRANCH" = "master" ] || [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TRAVIS_REPO_SLUG" =~ ^glpi-project ]; then
+    # setup_git only for the main repo and not forks
     git config --global user.email "deploy@travis-ci.org"
     git config --global user.name "Deployment Bot"
     git remote add origin-pages https://$GH_TOKEN@github.com/$TRAVIS_REPO_SLUG.git > /dev/null 2>&1
@@ -13,6 +13,7 @@ if [ "$TRAVIS_BRANCH" = "master" ] || [ "$TRAVIS_BRANCH" = "develop" ]; then
         # clean the repo and generate the docs
         git checkout composer.lock
         php $HOME/bin/sami.phar update $TRAVIS_BUILD_DIR/.github/samiConfig.php --force
+        find build/ -type f -name "*.html" -exec sed -i "1s/^/---\\nlayout: container\\n---\\n/" "{}" \;
 
         # commit_website_files
         git add build/tests/coverage/*
