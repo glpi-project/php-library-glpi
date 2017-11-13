@@ -1,0 +1,5 @@
+name: teclib
+parent: default
+static:
+    'css/teclib.css': 'css/teclib.css'
+    'layout/base.twig': 'layout/layout.twig'

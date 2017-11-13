@@ -1,0 +1,16 @@
+{% extends 'default/layout/layout.twig' %}
+
+{% block head %} {{ parent() }} <link rel="stylesheet" type="text/css" href="{{ path('css/teclib.css') }}"> {% endblock %}
+
+{% block content %}
+    <div id="content">
+        <div>
+            {{ block('menu') }}
+            {% block below_menu '' %}
+            <div id="page-content">
+                {% block page_content '' %}
+            </div>
+            {{ block('footer') }}
+        </div>
+    </div>
+{% endblock %}
