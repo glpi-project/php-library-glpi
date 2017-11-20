@@ -11,7 +11,6 @@ before_script:
   # https://stackoverflow.com/questions/26261001/warning-about-http-raw-post-data-being-deprecated
   - echo 'always_populate_raw_post_data = -1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - rm -f composer.lock
-  - wget -c http://get.sensiolabs.org/sami.phar -O "$HOME/bin/sami.phar"
   # let's clone and config GLPI for the client
   - git clone --depth=1 $GLPI_SOURCE $GLPI_ROOT_DIR && cd $GLPI_ROOT_DIR
   - composer install --no-dev --no-interaction

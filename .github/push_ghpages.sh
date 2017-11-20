@@ -2,6 +2,7 @@
 # please set the $GH_TOKEN in your travis dashboard
 
 if [ "$TRAVIS_BRANCH" = "master" ] || [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TRAVIS_REPO_SLUG" = "glpi-project/php-library-glpi" ]; then
+    wget http://get.sensiolabs.org/sami.phar -O "$HOME/bin/sami.phar"
     # setup_git only for the main repo and not forks
     git config --global user.email "deploy@travis-ci.org"
     git config --global user.name "Deployment Bot"
