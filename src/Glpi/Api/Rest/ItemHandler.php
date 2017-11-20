@@ -34,7 +34,7 @@ use Psr\Log\InvalidArgumentException;
 
 
 /**
- * This methods are dynamically handled by the __call() function to help developers' IDE.
+ * These methods are dynamically handled by the __call() function to help developers' IDE.
  * ItemTypes declared here are from the GLPI core, to add new auto-complete helper extend this
  * class and add your ItemTypes
  *
@@ -623,7 +623,7 @@ class ItemHandler {
       $result = null;
       switch ($method) {
          case 'create':
-            $result = $this->addItem($name, $input);
+            $result = $this->addItems($name, $input);
             break;
          case 'read':
             $result = $this->getItem($name, (int)$input, $params);
