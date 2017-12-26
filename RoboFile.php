@@ -18,9 +18,18 @@ class RoboFile extends \Robo\Tasks {
    var $options = [];
 
    /**
+    * regex pattern of the version in composer.json file
+    * @return string
+    */
+   public static function getVersionPattern() {
+      return '"version": "([^,]*)",';
+   }
+
+   /**
     * Task to create the changelog of the project
     * @param string $repository name
     * @return \Robo\Result
+    * @throws Exception
     */
    public function makeChangelog($repository) {
       $changelog = $this->taskChangelog();
@@ -40,7 +49,7 @@ class RoboFile extends \Robo\Tasks {
                // by default is patch
             }
          }
-         $this->composerGetVersion('composer.json');
+         $this->setVersionFromComposer('composer.json');
          $this->newVersion = $this->generateNextVersion($this->version);
          $changelog->filename('CHANGELOG.md')
             ->version("[" . $this->newVersion . "](https://github.com/$repository/tree/" . $this->newVersion . ") (" . date('Y-m-d') . ")")
@@ -53,6 +62,7 @@ class RoboFile extends \Robo\Tasks {
     * Task to publish a release similar to git-flow
     * @param $repository
     * @param string $label
+    * @throws Exception
     */
    public function publishRelease($repository, $label = 'none') {
       $this->stopOnFail(true);
@@ -74,7 +84,7 @@ class RoboFile extends \Robo\Tasks {
       $this->taskGitStack()->add($filename)->add($composerFile)
          ->commit($commitMessage, '--no-gpg-sign')
          ->checkout('master')
-         ->merge($releaseBranch)->tag($this->newVersion)
+         ->merge(" -X theirs " . $releaseBranch)->tag($this->newVersion)
          ->checkout('develop')->merge($releaseBranch)
          ->run();
 
@@ -83,8 +93,7 @@ class RoboFile extends \Robo\Tasks {
 
       // make changelog for gh-pages
       $this->taskGitStack()->checkout('-b gh-pages')->checkout('develop ' . $filename)->run();
-      $this->_exec('sed -i "1s/^/---\\nlayout: modal\\ntitle: changelog\\n---\\n/" ' . $filename)
-         ->run();
+      $this->_exec('sed -i "1s/^/---\\nlayout: modal\\ntitle: changelog\\n---\\n/" ' . $filename);
       $this->taskGitStack()->add($filename)->commit($commitMessage, '--no-gpg-sign')->run();
 
       // publish the changes
@@ -96,9 +105,19 @@ class RoboFile extends \Robo\Tasks {
 
    }
 
+   /**
+    * @param string $composerFile
+    */
    private function composerUpdate($composerFile) {
-      $fileContent = $this->composerGetContent($composerFile);
-      $fileContent = preg_replace('/("version":[^,]*,)/', '"version": "' . $this->newVersion . '",',
+      $fileContent = $this->getComposerContent($composerFile);
+      $pattern = self::getVersionPattern();
+      if (!preg_match('/' . $pattern . '/', $fileContent)) {
+         // composer.json doesn't have the version string, let's add it
+         $fileDecoded = json_decode($fileContent, true);
+         $fileDecoded = ['version' => $this->version] + $fileDecoded;
+         $fileContent = json_encode($fileDecoded, JSON_PRETTY_PRINT);
+      }
+      $fileContent = preg_replace('/' . $pattern . '/', '"version": "' . $this->newVersion . '",',
          $fileContent);
       file_put_contents($composerFile, $fileContent);
    }
@@ -182,22 +201,20 @@ class RoboFile extends \Robo\Tasks {
    }
 
    /**
-    * @param $composerFile
-    * @return bool|string
+    * @param string $composerFile
     */
-   private function composerGetVersion($composerFile) {
-      $fileContent = $this->composerGetContent($composerFile);
-      if (preg_match('/"version": "([^,]*)",/', $fileContent, $regs)) {
+   private function setVersionFromComposer($composerFile) {
+      $fileContent = $this->getComposerContent($composerFile);
+      if (preg_match('/' . self::getVersionPattern() . '/', $fileContent, $regs)) {
          $this->version = $regs[1];
       }
-      return $fileContent;
    }
 
    /**
-    * @param $composerFile
+    * @param string $composerFile
     * @return bool|string
     */
-   private function composerGetContent($composerFile) {
+   private function getComposerContent($composerFile) {
       if (!file_exists($composerFile)) {
          throw new \RuntimeException("Impossible to find the composer file ($composerFile)");
       }
