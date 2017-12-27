@@ -10,7 +10,10 @@ if [ "$TRAVIS_BRANCH" = "master" ] || [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TR
     git fetch upstream
 
     if [ "$TRAVIS_BRANCH" = "develop" ]; then
+        git stash save -u
         vendor/bin/robo publish:release "$TRAVIS_REPO_SLUG" none upstream
+        git checkout "$TRAVIS_BRANCH"
+        git stash pop
     fi
 
     # check if gh-pages exist in remote
