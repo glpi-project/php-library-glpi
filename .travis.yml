@@ -1,4 +1,6 @@
 language: php
+git:
+  depth: false
 
 env:
   global:

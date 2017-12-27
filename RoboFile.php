@@ -33,9 +33,9 @@ class RoboFile extends \Robo\Tasks {
     */
    public function makeChangelog($repository) {
       $changelog = $this->taskChangelog();
-      $command = 'git log --pretty=" * %s ([%h](https://github.com/' . $repository . '/commit/%h))" master..develop --grep="^fix" --grep="^feat" --grep=="^perf"';
+      $command = 'git log --pretty=" * %s ([%h](https://github.com/' . $repository . '/commit/%h))" remotes/upstream/master..remotes/upstream/develop --grep="^fix" --grep="^feat" --grep=="^perf"';
       $result = $this->_exec($command)->getMessage();
-      if (preg_match('/(BREAKING CHANGE:)|(^ \* feat)/', $result, $regs)) {
+      if (preg_match('/(BREAKING CHANGE:)|(^ \* feat)/m', $result, $regs)) {
          switch ($regs[0]) {
             case 'BREAKING CHANGE:':
                $this->releaseType = 'major';
@@ -86,25 +86,25 @@ class RoboFile extends \Robo\Tasks {
       $this->composerUpdate($composerFile);
       $this->taskGitStack()->add($filename)->add($composerFile)
          ->commit($commitMessage, '--no-gpg-sign')
-         ->checkout('master')
+         ->checkout('-b robo-master upstream/master')
          ->merge($releaseBranch)->tag($newVersion)
-         ->checkout('develop')->merge($releaseBranch)
+         ->checkout('-b robo-develop upstream/develop')->merge($releaseBranch)
          ->run();
 
       // finish git-flow with delete release branch
       $this->taskGitStack()->exec('branch -D ' . $releaseBranch)->run();
 
       // make changelog for gh-pages
-      $this->taskGitStack()->checkout('-b gh-pages')->checkout('develop ' . $filename)->run();
+      $this->taskGitStack()->checkout('-b robo-gh-pages upstream/gh-pages')->checkout('robo-develop ' . $filename)->run();
       $this->_exec('sed -i "1s/^/---\\nlayout: modal\\ntitle: changelog\\n---\\n/" ' . $filename);
       $this->taskGitStack()->add($filename)->commit($commitMessage, '--no-gpg-sign')->run();
 
       // publish the changes
       if($origin){
          $this->taskGitStack()
-            ->push($origin, 'gh-pages')
-            ->push($origin, 'develop')
-            ->push($origin, 'master')
+            ->push($origin, 'robo-gh-pages:gh-pages')
+            ->push($origin, 'robo-develop:develop')
+            ->push($origin, 'robo-master:master')
             ->push($origin, $newVersion)
             ->run();
       }
