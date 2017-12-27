@@ -27,8 +27,8 @@ script:
   - if [[ "$CS" == "true" ]]; then vendor/bin/phpcs -p --standard=vendor/glpi-project/coding-standard/GlpiStandard/ src/ tests/; fi
 
 after_success:
-  # let's update the documentation
-  - if [[ "$CS" == "true" ]]; then .github/push_ghpages.sh; fi
+  # let's update the documentation and make the releases
+  - if [[ "$CS" == "true" ]]; then .github/publish_changes.sh; fi
 
 matrix:
   include:

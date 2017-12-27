@@ -35,43 +35,46 @@ class RoboFile extends \Robo\Tasks {
       $changelog = $this->taskChangelog();
       $command = 'git log --pretty=" * %s ([%h](https://github.com/' . $repository . '/commit/%h))" master..develop --grep="^fix" --grep="^feat" --grep=="^perf"';
       $result = $this->_exec($command)->getMessage();
-      if ($result) {
-         $this->newVersion = $this->version;
-         if (preg_match('/(BREAKING CHANGE:)|(^ \* feat)/', $result, $regs)) {
-            var_dump($regs);
-            switch ($regs[0]) {
-               case 'BREAKING CHANGE:':
-                  $this->releaseType = 'major';
-                  break;
-               case ' * feat':
-                  $this->releaseType = 'minor';
-                  break;
-               // by default is patch
-            }
+      if (preg_match('/(BREAKING CHANGE:)|(^ \* feat)/', $result, $regs)) {
+         switch ($regs[0]) {
+            case 'BREAKING CHANGE:':
+               $this->releaseType = 'major';
+               break;
+            case ' * feat':
+               $this->releaseType = 'minor';
+               break;
+            // by default is patch
          }
-         $this->setVersionFromComposer('composer.json');
-         $this->newVersion = $this->generateNextVersion($this->version);
-         $changelog->filename('CHANGELOG.md')
-            ->version("[" . $this->newVersion . "](https://github.com/$repository/tree/" . $this->newVersion . ") (" . date('Y-m-d') . ")")
-            ->setBody($result)
-            ->run();
       }
+      $this->setVersionFromComposer('composer.json');
+      $newVersion = $this->newVersion = $this->generateNextVersion($this->version);
+      $result = ($result) ? $result : ' * Minor changes, for more details see our [commit history](https://github.com/' . $repository . '/compare/master...' . $newVersion . '/bugfixes)';
+      $changelog->filename('CHANGELOG.md')
+         ->version("[" . $newVersion . "](https://github.com/$repository/tree/" . $newVersion . ") (" . date('Y-m-d') . ")")
+         ->setBody($result)
+         ->run();
    }
 
    /**
     * Task to publish a release similar to git-flow
     * @param $repository
     * @param string $label
+    * @param string $origin
     * @throws Exception
     */
-   public function publishRelease($repository, $label = 'none') {
+   public function publishRelease($repository, $label = 'none', $origin = '') {
       $this->stopOnFail(true);
+
+      if (!in_array($label, ['rc', 'beta', 'alpha', 'none'])) {
+         throw new \InvalidArgumentException('Release label, can be rc, beta, alpha or none');
+      }
       $this->options['label'] = $label;
 
       // changelog generation
       $this->makeChangelog($repository);
 
-      $releaseBranch = 'release/' . $this->newVersion;
+      $newVersion = $this->newVersion;
+      $releaseBranch = 'release/' . $newVersion;
 
       // git-flow start
       $this->taskGitStack()->checkout('-b ' . $releaseBranch)->run();
@@ -84,7 +87,7 @@ class RoboFile extends \Robo\Tasks {
       $this->taskGitStack()->add($filename)->add($composerFile)
          ->commit($commitMessage, '--no-gpg-sign')
          ->checkout('master')
-         ->merge(" -X theirs " . $releaseBranch)->tag($this->newVersion)
+         ->merge($releaseBranch)->tag($newVersion)
          ->checkout('develop')->merge($releaseBranch)
          ->run();
 
@@ -97,12 +100,14 @@ class RoboFile extends \Robo\Tasks {
       $this->taskGitStack()->add($filename)->commit($commitMessage, '--no-gpg-sign')->run();
 
       // publish the changes
-      /*$this->taskGitStack()
-         ->push('origin', 'gh-pages')
-         ->push('origin', 'develop')
-         ->push('origin', 'master')
-         ->run();*/
-
+      if($origin){
+         $this->taskGitStack()
+            ->push($origin, 'gh-pages')
+            ->push($origin, 'develop')
+            ->push($origin, 'master')
+            ->push($origin, $newVersion)
+            ->run();
+      }
    }
 
    /**
