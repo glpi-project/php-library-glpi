@@ -6,11 +6,15 @@ if [ "$TRAVIS_BRANCH" = "master" ] || [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TR
     # setup_git only for the main repo and not forks
     git config --global user.email "deploy@travis-ci.org"
     git config --global user.name "Deployment Bot"
-    git remote add origin-pages https://"$GH_TOKEN"@github.com/"$TRAVIS_REPO_SLUG".git > /dev/null 2>&1
-    git fetch origin-pages
+    git remote add upstream https://"$GH_TOKEN"@github.com/"$TRAVIS_REPO_SLUG".git > /dev/null 2>&1
+    git fetch upstream
+
+    if [ "$TRAVIS_BRANCH" = "develop" ]; then
+        vendor/bin/robo publish:release "$TRAVIS_REPO_SLUG" none upstream
+    fi
 
     # check if gh-pages exist in remote
-    if [ "git branch -r --list origin-pages/gh-pages" ]; then
+    if [ "git branch -r --list upstream/gh-pages" ]; then
         # clean the repo and generate the docs
         git checkout composer.lock
         php $HOME/bin/sami.phar update "$TRAVIS_BUILD_DIR"/.github/samiConfig.php --force
@@ -21,12 +25,12 @@ if [ "$TRAVIS_BRANCH" = "master" ] || [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TR
         git add build/docs/*
         git checkout -b localCi
         git commit -m "changes to be merged"
-        git checkout -b gh-pages origin-pages/gh-pages
+        git checkout -b gh-pages upstream/gh-pages
         git checkout localCi build/
 
         # upload_files
         git commit --message "docs(*): update code coverage and test result"
-        git rebase origin-pages/gh-pages
-        git push --quiet --set-upstream origin-pages gh-pages --force
+        git rebase upstream/gh-pages
+        git push --quiet --set-upstream upstream gh-pages --force
     fi
 fi
