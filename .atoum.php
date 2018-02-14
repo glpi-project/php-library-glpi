@@ -4,7 +4,7 @@ use mageekguy\atoum\reports\coverage;
 use mageekguy\atoum\writers\std;
 
 $branch = getenv('TRAVIS_BRANCH');
-if ($branch && in_array($branch, ['master', 'develop', 'fetaure/documentation'])) {
+if ($branch && in_array($branch, ['develop'])) {
    $script->addDefaultReport();
 
    $coverage = new coverage\html();
