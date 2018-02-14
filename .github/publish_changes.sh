@@ -22,6 +22,8 @@ if [ "$TRAVIS_BRANCH" = "master" ] || [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TR
         git checkout composer.lock
         php $HOME/bin/sami.phar update "$TRAVIS_BUILD_DIR"/.github/samiConfig.php --force
         find build/ -type f -name "*.html" -exec sed -i "1s/^/---\\nlayout: container\\n---\\n/" "{}" \;
+        find build/tests/coverage/ -type f -name "*.html" -exec sed -i "/bootstrap.min.css/d" "{}" \;
+        find build/tests/coverage/ -type f -name "*.html" -exec sed -i "/report.css/d" "{}" \;
 
         # commit_website_files
         git add build/tests/coverage/*
