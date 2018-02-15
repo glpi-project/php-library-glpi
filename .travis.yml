@@ -6,7 +6,12 @@ env:
   global:
     - GLPI_URL=http://localhost:8080
     - GLPI_ROOT_DIR=$TRAVIS_BUILD_DIR/../glpi
-    - GLPI_SOURCE=https://github.com/glpi-project/glpi -b 9.2/bugfixes
+    - GLPI_SOURCE=https://github.com/glpi-project/glpi
+    - CS=7.2
+  matrix:
+    - GLPI_BRANCH=9.2.1
+    - GLPI_BRANCH=9.2/bugfixes
+    - GLPI_BRANCH=master
 
 before_script:
   # The following line prevents PHP Warning about `$HTTP_RAW_POST_DATA` being deprecated
@@ -14,10 +19,11 @@ before_script:
   - echo 'always_populate_raw_post_data = -1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - rm -f composer.lock
   # let's clone and config GLPI for the client
-  - git clone --depth=1 $GLPI_SOURCE $GLPI_ROOT_DIR && cd $GLPI_ROOT_DIR
+  - git clone --depth=1 $GLPI_SOURCE  -b $GLPI_BRANCH $GLPI_ROOT_DIR && cd $GLPI_ROOT_DIR
   - composer install --no-dev --no-interaction
   - mysql -u root -e 'create database glpitest;'
-  - php tools/cliinstall.php --db=glpitest --user=root
+  - if [ -e scripts/cliinstall.php ] ; then php scripts/cliinstall.php --db=glpitest --user=root --tests ; fi
+  - if [ -e tools/cliinstall.php ] ; then php tools/cliinstall.php --db=glpitest --user=root --tests ; fi
   # start a web server on port 8080, run in the background; wait for initialization
   - php -S localhost:8080 > /dev/null 2>&1 &
   - until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
@@ -25,23 +31,22 @@ before_script:
   - cd $TRAVIS_BUILD_DIR && composer install --no-interaction
 
 script:
-  - vendor/bin/atoum --debug -bf tests/bootstrap.php --max-children-number 1 -d tests/unit
-  - if [[ "$CS" == "true" ]]; then vendor/bin/phpcs -p --standard=vendor/glpi-project/coding-standard/GlpiStandard/ src/ tests/; fi
+  - vendor/bin/atoum -bf tests/bootstrap.php -d tests/unit
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "$CS" ]] && [ "$GLPI_BRANCH" = "9.2/bugfixes" ]; then vendor/bin/phpcs -p --standard=vendor/glpi-project/coding-standard/GlpiStandard/ src/ tests/; fi
 
 after_success:
   # let's update the documentation and make the releases
-  - if [[ "$CS" == "true" ]]; then .github/publish_changes.sh; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "$CS" ]] && [ "$GLPI_BRANCH" = "9.2/bugfixes" ]; then .github/publish_changes.sh; fi
 
-matrix:
-  include:
-    - php: 5.6
-    - php: 7.0
-    - php: 7.1
-    - php: 7.2
-      env: CS=true
-    - php: nightly
-  allow_failures:
-    - php: nightly
+php:
+  - 5.6
+  - 7.0
+  - 7.1
+  - 7.2
+  - nightly
+
+allow_failures:
+- php: nightly
 
 cache:
   directories:
