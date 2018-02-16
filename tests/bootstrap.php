@@ -40,8 +40,7 @@ if (empty($glpiRoot)) {
    die('environment variable GLPI_ROOT_DIR not set' . PHP_EOL);
 }
 define('GLPI_ROOT', realpath($glpiRoot));
-define('GLPI_CONFIG_DIR', GLPI_ROOT . '/tests');
-if (!file_exists(GLPI_ROOT . '/tests/config_db.php')) {
+if (!file_exists(GLPI_ROOT . '/config/config_db.php')) {
    echo "config_db.php missing. Did GLPI successfully initialized ?\n";
    exit(1);
 }
