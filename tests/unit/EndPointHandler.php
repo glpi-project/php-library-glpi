@@ -122,23 +122,17 @@ class EndPointHandler extends BaseTestCase {
 
       // check for invalid entity param
       $response = $this->testedInstance->changeActiveEntities(['entities_id' => -1]);
-      $this->array($response)
-         ->integer['statusCode']->isEqualTo(parent::HTTP_OK)
-         ->string['body']->isEqualTo('false');
+      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
 
       // check for invalid recursive param
       $response = $this->testedInstance->changeActiveEntities(['is_recursive' => "lorem"]);
-      $this->array($response)
-         ->integer['statusCode']->isEqualTo(parent::HTTP_OK)
-         ->string['body']->isEqualTo('true'); // this could be a bug from glpi.
+      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
 
       $response = $this->testedInstance->changeActiveEntities([
          'entities_id' => 0,
          'is_recursive' => "lorem",
       ]);
-      $this->array($response)
-         ->integer['statusCode']->isEqualTo(parent::HTTP_OK)
-         ->string['body']->isEqualTo('true');
+      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
 
       // check for valid params with different default values
       $response = $this->testedInstance->changeActiveEntities([
