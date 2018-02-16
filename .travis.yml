@@ -22,8 +22,8 @@ before_script:
   - git clone --depth=1 $GLPI_SOURCE  -b $GLPI_BRANCH $GLPI_ROOT_DIR && cd $GLPI_ROOT_DIR
   - composer install --no-dev --no-interaction
   - mysql -u root -e 'create database glpitest;'
-  - if [ -e scripts/cliinstall.php ] ; then php scripts/cliinstall.php --db=glpitest --user=root --tests ; fi
-  - if [ -e tools/cliinstall.php ] ; then php tools/cliinstall.php --db=glpitest --user=root --tests ; fi
+  - if [ -e scripts/cliinstall.php ] ; then php scripts/cliinstall.php --db=glpitest --user=root ; fi
+  - if [ -e tools/cliinstall.php ] ; then php tools/cliinstall.php --db=glpitest --user=root ; fi
   # start a web server on port 8080, run in the background; wait for initialization
   - php -S localhost:8080 > /dev/null 2>&1 &
   - until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
