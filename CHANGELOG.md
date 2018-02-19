@@ -4,6 +4,10 @@ title: changelog
 ---
 # Changelog
 
+#### [0.1.32](https://github.com/glpi-project/php-library-glpi/tree/0.1.32) (2018-02-19)
+
+ * Minor changes, for more details see our [commit history](https://github.com/glpi-project/php-library-glpi/compare/master...0.1.32/bugfixes)
+
 #### [0.1.31](https://github.com/glpi-project/php-library-glpi/tree/0.1.31) (2018-02-19)
 
  * Minor changes, for more details see our [commit history](https://github.com/glpi-project/php-library-glpi/compare/master...0.1.31/bugfixes)
