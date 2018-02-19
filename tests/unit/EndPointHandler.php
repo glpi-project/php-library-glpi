@@ -120,19 +120,24 @@ class EndPointHandler extends BaseTestCase {
          ->integer['statusCode']->isEqualTo(parent::HTTP_OK)
          ->string['body']->isEqualTo('true');
 
+      // for glpi 9.2.1 the status code is different
+      $response = $this->client->getGlpiConfig();
+      $stdClass = json_decode($response['body']);
+      $statusCode = ($stdClass->cfg_glpi->version == '9.2.1') ? parent::HTTP_OK : parent::HTTP_BAD_REQUEST;
+
       // check for invalid entity param
       $response = $this->testedInstance->changeActiveEntities(['entities_id' => -1]);
-      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
+      $this->assertJsonResponse($response, $statusCode);
 
       // check for invalid recursive param
       $response = $this->testedInstance->changeActiveEntities(['is_recursive' => "lorem"]);
-      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
+      $this->assertJsonResponse($response, $statusCode);
 
       $response = $this->testedInstance->changeActiveEntities([
          'entities_id' => 0,
          'is_recursive' => "lorem",
       ]);
-      $this->assertJsonResponse($response, parent::HTTP_BAD_REQUEST);
+      $this->assertJsonResponse($response, $statusCode);
 
       // check for valid params with different default values
       $response = $this->testedInstance->changeActiveEntities([
