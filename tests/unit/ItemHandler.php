@@ -430,7 +430,15 @@ class ItemHandler extends BaseTestCase {
          ->array($stdClass->data)->size->isGreaterThan(1);
 
       // check for result with criteria
-      $criteria = ['field' => 1, 'searchtype' => 'contains', 'value' => 'glpi'];
+      $criteria = ['field' => 1, 'searchtype' => 'equals', 'value' => 'glpi'];
+      $response = $testedInstance->searchItems('User', ['query' => ['criteria' => $criteria]]);
+      $this->assertJsonResponse($response);
+      $stdClass = json_decode($response['body']);
+      $this->given($stdClass)
+         ->integer($stdClass->count)->isEqualTo(1)
+         ->array($stdClass->data)->size->isEqualTo(1);
+
+      $criteria[] = ['link' => 'OR', 'field' => 1, 'searchtype' => 'contains', 'value' => 'tech'];
       $response = $testedInstance->searchItems('User', [
          'query' => [
             'criteria' => $criteria,
@@ -441,8 +449,8 @@ class ItemHandler extends BaseTestCase {
       $this->assertJsonResponse($response);
       $stdClass = json_decode($response['body']);
       $this->given($stdClass)
-         ->integer($stdClass->count)->isEqualTo(1)
+         ->integer($stdClass->count)->isEqualTo(2)
          ->string($stdClass->order)->isEqualTo('DESC')
-         ->array($stdClass->data)->size->isEqualTo(1);
+         ->array($stdClass->data)->size->isEqualTo(2);
    }
 }
