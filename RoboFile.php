@@ -33,7 +33,10 @@ class RoboFile extends \Robo\Tasks {
     */
    public function makeChangelog($repository) {
       $changelog = $this->taskChangelog();
-      $command = 'git log --pretty=" * %s ([%h](https://github.com/' . $repository . '/commit/%h))" remotes/upstream/master..remotes/upstream/develop --grep="^fix" --grep="^feat" --grep=="^perf"';
+      $command = 'git describe --abbrev=0 --tags';
+      $result = $this->_exec($command)->getMessage();
+      $baseVersion = ($result) ? 'tags/' . trim($result) : 'master';// if a tag exist we use it as point of start
+      $command = 'git log --pretty=" * %s ([%h](https://github.com/' . $repository . '/commit/%h))" remotes/upstream/' . $baseVersion . '..remotes/upstream/develop --grep="^fix" --grep="^feat" --grep=="^perf"';
       $result = $this->_exec($command)->getMessage();
       if(empty($result)){
          return;
@@ -66,7 +69,7 @@ class RoboFile extends \Robo\Tasks {
     * @throws Exception
     */
    public function publishRelease($repository, $label = 'none', $origin = '') {
-      $this->stopOnFail(true);
+//      $this->stopOnFail(true);
 
       if (!in_array($label, ['rc', 'beta', 'alpha', 'none'])) {
          throw new \InvalidArgumentException('Release label, can be rc, beta, alpha or none');
