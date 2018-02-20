@@ -28,13 +28,16 @@ class RoboFile extends \Robo\Tasks {
    /**
     * Task to create the changelog of the project
     * @param string $repository name
-    * @return \Robo\Result
+    * @return \Robo\Result|void
     * @throws Exception
     */
    public function makeChangelog($repository) {
       $changelog = $this->taskChangelog();
       $command = 'git log --pretty=" * %s ([%h](https://github.com/' . $repository . '/commit/%h))" remotes/upstream/master..remotes/upstream/develop --grep="^fix" --grep="^feat" --grep=="^perf"';
       $result = $this->_exec($command)->getMessage();
+      if(empty($result)){
+         return;
+      }
       if (preg_match('/(BREAKING CHANGE:)|(^ \* feat)/m', $result, $regs)) {
          switch ($regs[0]) {
             case 'BREAKING CHANGE:':
