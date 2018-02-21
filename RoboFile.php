@@ -28,18 +28,19 @@ class RoboFile extends \Robo\Tasks {
    /**
     * Task to create the changelog of the project
     * @param string $repository name
-    * @return \Robo\Result|void
+    * @return \Robo\Result
     * @throws Exception
     */
    public function makeChangelog($repository) {
       $changelog = $this->taskChangelog();
       $command = 'git describe --abbrev=0 --tags';
       $result = $this->_exec($command)->getMessage();
+      $this->stopOnFail(true);
       $baseVersion = ($result) ? 'tags/' . trim($result) : 'master';// if a tag exist we use it as point of start
       $command = 'git log --pretty=" * %s ([%h](https://github.com/' . $repository . '/commit/%h))" remotes/upstream/' . $baseVersion . '..remotes/upstream/develop --grep="^fix" --grep="^feat" --grep=="^perf"';
       $result = $this->_exec($command)->getMessage();
       if(empty($result)){
-         return;
+         return Robo\Result::cancelled('No new commits for release an update');
       }
       if (preg_match('/(BREAKING CHANGE:)|(^ \* feat)/m', $result, $regs)) {
          switch ($regs[0]) {
@@ -69,15 +70,17 @@ class RoboFile extends \Robo\Tasks {
     * @throws Exception
     */
    public function publishRelease($repository, $label = 'none', $origin = '') {
-//      $this->stopOnFail(true);
-
       if (!in_array($label, ['rc', 'beta', 'alpha', 'none'])) {
          throw new \InvalidArgumentException('Release label, can be rc, beta, alpha or none');
       }
       $this->options['label'] = $label;
 
       // changelog generation
-      $this->makeChangelog($repository);
+      $result = $this->makeChangelog($repository);
+      if($result->wasCancelled()){
+         $this->say($result->getMessage());
+         return;
+      }
 
       $newVersion = $this->newVersion;
       $releaseBranch = 'release/' . $newVersion;
