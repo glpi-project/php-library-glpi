@@ -56,5 +56,14 @@ if ($response['statusCode'] == 404) {
 }
 echo "User name: " . $bodyDecoded->name . "\n";
 
+// Let's use the search end-point
+$criteria[] = ['field' => 1, 'searchtype' => 'contains', 'value' => 'normal'];
+$criteria[] = ['link' => 'OR', 'field' => 1, 'searchtype' => 'contains', 'value' => 'tech'];
+$itemHandler->searchItems('Users',[
+   'criteria' => $criteria,
+   'order'    => 'DESC',
+   'uid_cols' => 'true',
+]);
+
 // let's end the session.
 $client->killSession();
