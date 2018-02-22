@@ -11,7 +11,7 @@ if [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
     git remote add upstream https://"$GH_TOKEN"@github.com/"$TRAVIS_REPO_SLUG".git > /dev/null 2>&1
     git fetch upstream
 
-    if [ "$TRAVIS_BRANCH" = "develop" ] && [ $TRAVIS_COMMIT_MESSAGE == *"trigger release"* ]; then
+    if [ "$TRAVIS_BRANCH" = "develop" ] && [ $TRAVIS_COMMIT_MESSAGE = *"trigger release"* ]; then
         echo "generating the release"
         git stash save -u
         vendor/bin/robo publish:release "$TRAVIS_REPO_SLUG" none upstream
