@@ -36,7 +36,7 @@ layout: container
         
                     <td style="text-align: center; width: 100%">
                 <h1 class="text-success">
-                    82%
+                    88%
                                             <small>of 105</small>
                                     </h1>
                 <strong>Lines</strong>
@@ -109,7 +109,7 @@ layout: container
             <td><a href="#searchItems">Glpi\Api\Rest\ItemHandler::searchItems()</a></td>
                                         <td style="text-align: center">6</td>
                 <td style="text-align: center">    
-    <span class="label label-danger">0%</span>
+    <span class="label label-success">100%</span>
 </td>
                                             </tr>
             <tr>
@@ -4124,27 +4124,27 @@ layout: container
                     <th id="L504" class="number ">504</th>
 
                     <td class="" id="searchItems">
-                        <pre>   public function searchItems($itemType, array $queryString = []) {<span class="label label-danger">0%</span><div class="btn-group"></div></pre>
+                        <pre>   public function searchItems($itemType, array $queryString = []) {<span class="label label-success">100%</span><div class="btn-group"></div></pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L505" class="number uncovered">505</th>
+                    <th id="L505" class="number covered">505</th>
 
-                    <td class="uncovered" >
+                    <td class="covered" >
                         <pre>      $options = [];</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L506" class="number uncovered">506</th>
+                    <th id="L506" class="number covered">506</th>
 
-                    <td class="uncovered" >
+                    <td class="covered" >
                         <pre>      if ($queryString) {</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L507" class="number uncovered">507</th>
+                    <th id="L507" class="number covered">507</th>
 
-                    <td class="uncovered" >
+                    <td class="covered" >
                         <pre>         $options[&#039;query&#039;] = $queryString;</pre>
                     </td>
                 </tr>
@@ -4157,9 +4157,9 @@ layout: container
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L509" class="number uncovered">509</th>
+                    <th id="L509" class="number covered">509</th>
 
-                    <td class="uncovered" >
+                    <td class="covered" >
                         <pre>      $response = $this-&gt;client-&gt;request(&#039;get&#039;, &#039;search/&#039; . $itemType, $options);</pre>
                     </td>
                 </tr>
@@ -4172,16 +4172,16 @@ layout: container
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L511" class="number uncovered">511</th>
+                    <th id="L511" class="number covered">511</th>
 
-                    <td class="uncovered" >
+                    <td class="covered" >
                         <pre>         &#039;statusCode&#039; =&gt; $response-&gt;getStatusCode(),</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L512" class="number uncovered">512</th>
+                    <th id="L512" class="number covered">512</th>
 
-                    <td class="uncovered" >
+                    <td class="covered" >
                         <pre>         &#039;body&#039; =&gt; $response-&gt;getBody()-&gt;getContents(),</pre>
                     </td>
                 </tr>
