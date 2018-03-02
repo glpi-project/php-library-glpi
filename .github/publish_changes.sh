@@ -41,6 +41,7 @@ if [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
         git checkout -b localCi
         git commit -m "changes to be merged"
         git checkout -b gh-pages upstream/gh-pages
+        git rm -r build/
         git checkout localCi build/
 
         # upload_files
