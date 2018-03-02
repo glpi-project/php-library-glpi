@@ -2,7 +2,6 @@
 # please set the $GH_TOKEN in your travis dashboard
 
 if [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
-    wget http://get.sensiolabs.org/sami.phar -O "$HOME/bin/sami.phar"
     # setup_git only for the main repo and not forks
     echo "Configuring git user"
     git config --global user.email "deploy@travis-ci.org"
@@ -24,6 +23,7 @@ if [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
         echo "generating the docs"
         # clean the repo and generate the docs
         git checkout composer.lock
+        wget http://get.sensiolabs.org/sami.phar -O "$HOME/bin/sami.phar"
         php $HOME/bin/sami.phar update "$TRAVIS_BUILD_DIR"/.github/samiConfig.php --force
         find build/docs/ -type f -name "*.html" -exec sed -i "1s/^/---\\nlayout: jazzy\\n---\\n/" "{}" \;
         find build/docs/ -type f -name "*.html" -exec sed -i "/css\/bootstrap/d" "{}" \;
