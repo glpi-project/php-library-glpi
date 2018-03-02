@@ -39,7 +39,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Glpi\\Api\\Rest\\": "src/Glpi/Api/Rest/"
+      "Glpi\\Api\\": "src/Glpi/Api/"
     },
     "exclude-from-classmap": ["tests/"]
   },
