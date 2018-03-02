@@ -629,10 +629,10 @@ class ItemHandler {
             $result = $this->getItem($name, (int)$input, $params);
             break;
          case 'update':
-            $result = $this->updateItem($name, '', $input);
+            $result = $this->updateItems($name, '', $input);
             break;
          case 'delete':
-            $result = $this->deleteItem($name, '', $input, $params);
+            $result = $this->deleteItems($name, '', $input, $params);
             break;
          default:
             throw new InvalidArgumentException(ErrorHandler::getMessage('ERROR_APILIB_ARGUMENTS'));
