@@ -20,7 +20,7 @@ before_script:
   - rm -f composer.lock
   # let's clone and config GLPI for the client
   - git clone --depth=1 $GLPI_SOURCE  -b $GLPI_BRANCH $GLPI_ROOT_DIR && cd $GLPI_ROOT_DIR
-  - composer install --no-dev --no-interaction
+  - composer install --no-interaction
   - mysql -u root -e 'create database glpitest;'
   - if [ -e scripts/cliinstall.php ] ; then php scripts/cliinstall.php --db=glpitest --user=root ; fi
   - if [ -e tools/cliinstall.php ] ; then php tools/cliinstall.php --db=glpitest --user=root ; fi
