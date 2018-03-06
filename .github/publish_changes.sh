@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # please set the $GH_TOKEN in your travis dashboard
 
 if [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
