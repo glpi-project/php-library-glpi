@@ -10,7 +10,7 @@ if [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
     git remote add upstream https://"$GH_TOKEN"@github.com/"$TRAVIS_REPO_SLUG".git > /dev/null 2>&1
     git fetch upstream
 
-    if [ "$TRAVIS_BRANCH" = "develop" ] && [[ "$TRAVIS_COMMIT_MESSAGE" = *"trigger release"* ]]; then
+    if [ "$TRAVIS_BRANCH" = "develop" ] && [[ "$TRAVIS_COMMIT_MESSAGE" == *"trigger release"* ]]; then
         echo "generating the release"
         git stash save -u
         vendor/bin/robo publish:release "$TRAVIS_REPO_SLUG" none upstream
@@ -24,7 +24,7 @@ if [ "$TRAVIS_BRANCH" = "develop" ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
         # clean the repo and generate the docs
         git checkout composer.lock
         wget http://get.sensiolabs.org/sami.phar -O "$HOME/bin/sami.phar"
-        php $HOME/bin/sami.phar update "$TRAVIS_BUILD_DIR"/.github/samiConfig.php --force
+        php "$HOME"/bin/sami.phar update "$TRAVIS_BUILD_DIR"/.github/samiConfig.php --force
         find build/docs/ -type f -name "*.html" -exec sed -i "1s/^/---\\nlayout: jazzy\\n---\\n/" "{}" \;
         find build/docs/ -type f -name "*.html" -exec sed -i "/css\/bootstrap/d" "{}" \;
         find build/docs/ -type f -name "*.html" -exec sed -i "/bootstrap.min.js/d" "{}" \;
