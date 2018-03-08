@@ -28,18 +28,40 @@ class RoboFile extends \Robo\Tasks {
    /**
     * Task to create the changelog of the project
     * @param string $repository name
-    * @return \Robo\Result
+    * @return \Robo\Result|\Robo\ResultData
     * @throws Exception
     */
    public function makeChangelog($repository) {
+      $repoPrefix = 'remotes/upstream/';
+      $parentRevision = 'master';
+      $currentRevision = 'develop';
+
       $changelog = $this->taskChangelog();
       $command = 'git describe --abbrev=0 --tags';
-      $result = $this->_exec($command)->getMessage();
+      $lastTag = $this->_exec($command)->getMessage();
+      if ($lastTag) {
+         // if tags exist check against the last one
+         $parentRevision = 'tags/' . trim($lastTag);
+      } else if (!$this->_exec("git ls-remote upstream $parentRevision")->getMessage()) {
+         // master branch does not exist, let's go against first parent as first time ever revision check
+         $message = $this->_exec("git rev-list --max-parents=0 HEAD")->getMessage();
+         $parentRevision = substr($message, 0, 6) . '^';
+         $currentRevision = 'HEAD';
+      }
+
+      // default revision range
+      $fromRev = $repoPrefix . $parentRevision;
+      $toRev = $repoPrefix . $currentRevision;
+      if ($currentRevision == 'HEAD') {
+         // first time ever revision check fix, prefix can't be used.
+         $fromRev = $parentRevision;
+         $toRev = $currentRevision;
+      }
+
       $this->stopOnFail(true);
-      $baseVersion = ($result) ? 'tags/' . trim($result) : 'master';// if a tag exist we use it as point of start
-      $command = 'git log --pretty=" * %s ([%h](https://github.com/' . $repository . '/commit/%h))" remotes/upstream/' . $baseVersion . '..remotes/upstream/develop --grep="^fix" --grep="^feat" --grep=="^perf"';
+      $command = 'git log --pretty=" * %s ([%h](https://github.com/' . $repository . '/commit/%h))"  ' . $fromRev . '..' . $toRev . ' --grep="^fix" --grep="^feat" --grep=="^perf"';
       $result = $this->_exec($command)->getMessage();
-      if(empty($result)){
+      if (empty($result)) {
          return Robo\Result::cancelled('No new commits for release an update');
       }
       if (preg_match('/(BREAKING CHANGE:)|(^ \* feat)/m', $result, $regs)) {
@@ -77,7 +99,7 @@ class RoboFile extends \Robo\Tasks {
 
       // changelog generation
       $result = $this->makeChangelog($repository);
-      if($result->wasCancelled()){
+      if (null !== $result && $result->wasCancelled()) {
          $this->say($result->getMessage());
          return;
       }
@@ -109,7 +131,7 @@ class RoboFile extends \Robo\Tasks {
       $this->taskGitStack()->add($filename)->commit($commitMessage, '--no-gpg-sign')->run();
 
       // publish the changes
-      if($origin){
+      if ($origin) {
          $this->taskGitStack()
             ->push($origin, 'robo-gh-pages:gh-pages')
             ->push($origin, 'robo-develop:develop')
