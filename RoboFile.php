@@ -45,7 +45,7 @@ class RoboFile extends \Robo\Tasks {
       } else if (!$this->_exec("git ls-remote upstream $parentRevision")->getMessage()) {
          // master branch does not exist, let's go against first parent as first time ever revision check
          $message = $this->_exec("git rev-list --max-parents=0 HEAD")->getMessage();
-         $parentRevision = substr($message, 0, 6) . '^';
+         $parentRevision = trim($message);
          $currentRevision = 'HEAD';
       }
 
