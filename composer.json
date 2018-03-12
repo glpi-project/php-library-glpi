@@ -1,56 +1,59 @@
 {
-  "name": "glpi-project/php-library-glpi",
-  "type": "library",
-  "description": "GLPI API Client Library for PHP",
-  "keywords": [
-    "GLPI",
-    "rest",
-    "api",
-    "client"
-  ],
-  "homepage": "https://glpi-project.github.io/php-library-glpi/",
-  "license": "GPL-3.0+",
-  "authors": [
-    {
-      "name": "Thierry Bugier",
-      "email": "tbugier@teclib.com",
-      "role": "Developer"
+    "version": "0.1.0",
+    "name": "glpi-project\/php-library-glpi",
+    "type": "library",
+    "description": "GLPI API Client Library for PHP",
+    "keywords": [
+        "GLPI",
+        "rest",
+        "api",
+        "client"
+    ],
+    "homepage": "https:\/\/glpi-project.github.io\/php-library-glpi\/",
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Thierry Bugier",
+            "email": "tbugier@teclib.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Domingo Oropeza",
+            "email": "doropeza@teclib.com",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "contact@teclib.com",
+        "irc": "irc:\/\/irc.freenode.org\/glpi"
     },
-    {
-      "name": "Domingo Oropeza",
-      "email": "doropeza@teclib.com",
-      "role": "Developer"
-    }
-  ],
-  "support": {
-    "email": "contact@teclib.com",
-    "irc": "irc://irc.freenode.org/glpi"
-  },
-  "require": {
-    "php": ">=5.6.0",
-    "guzzlehttp/guzzle": "^6.3"
-  },
-  "require-dev": {
-    "atoum/atoum": "^3.1",
-    "atoum/stubs": "^2.5",
-    "atoum/json-schema-extension": "^2.1",
-    "glpi-project/tools": "^0.1.2",
-    "atoum/reports-extension": "^3.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "Glpi\\Api\\": "src/Glpi/Api/"
+    "require": {
+        "php": ">=5.6.0",
+        "guzzlehttp\/guzzle": "^6.3"
     },
-    "exclude-from-classmap": ["tests/"]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Glpi\\Api\\Rest\\tests\\": "tests/"
-    }
-  },
-  "config": {
-    "optimize-autoloader": true
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+    "require-dev": {
+        "atoum\/atoum": "^3.1",
+        "atoum\/stubs": "^2.5",
+        "atoum\/json-schema-extension": "^2.1",
+        "glpi-project\/tools": "^0.1.2",
+        "atoum\/reports-extension": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Glpi\\Api\\": "src\/Glpi\/Api\/"
+        },
+        "exclude-from-classmap": [
+            "tests\/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Glpi\\Api\\Rest\\tests\\": "tests\/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
