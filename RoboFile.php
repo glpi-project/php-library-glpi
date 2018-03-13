@@ -127,8 +127,8 @@ class RoboFile extends \Robo\Tasks {
 
       // make changelog for gh-pages
       $this->taskGitStack()->checkout('-b robo-gh-pages upstream/gh-pages')->checkout('robo-develop ' . $filename)->run();
-      $this->_exec('sed -i "1s/^/---\\nlayout: modal\\ntitle: changelog\\n---\\n/" ' . $filename);
-      $this->taskGitStack()->add($filename)->commit($commitMessage, '--no-gpg-sign')->run();
+      $this->_exec('mv -f ' . $filename. ' _includes/' . $filename);
+      $this->taskGitStack()->add('_includes/' .$filename)->commit($commitMessage, '--no-gpg-sign')->run();
 
       // publish the changes
       if ($origin) {
