@@ -97,7 +97,7 @@ class Client {
     * @return boolean True if success
     */
    public function initSessionByUserToken($userToken) {
-      $response = $this->request('get', 'initSession', ['Authorization' => "user_token $userToken"]);
+      $response = $this->request('get', 'initSession', ['headers' => ['Authorization' => "user_token $userToken"]]);
       if ($response->getStatusCode() != 200
          || !$this->sessionToken = json_decode($response->getBody()->getContents(), true)['session_token']) {
          $body = json_decode($response->getBody()->getContents());
