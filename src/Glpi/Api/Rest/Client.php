@@ -133,12 +133,14 @@ class Client {
       $apiToken = $this->addTokens();
       try {
          $options['headers']['Content-Type'] = "application/json";
-         if ($apiToken) {
+         $sessionHeaders = [];
+         if ($apiToken and key_exists('Session-Token', $apiToken)) {
             $sessionHeaders = ['Session-Token' => $apiToken['Session-Token']];
-            if (key_exists('App-Token', $apiToken)) {
-               $sessionHeaders['App-Token'] = $apiToken['App-Token'];
-            }
-            $options = array_merge_recursive($options, ['headers' => $sessionHeaders]);
+         }
+         if (key_exists('App-Token', $apiToken)) {
+            $sessionHeaders['App-Token'] = $apiToken['App-Token'];
+         }
+         $options = array_merge_recursive($options, ['headers' => $sessionHeaders]);
          }
          $response = $this->httpClient->request($method, $this->url . $uri, $options);
          return $response;
