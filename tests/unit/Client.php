@@ -49,9 +49,9 @@ class Client extends BaseTestCase {
    }
 
    /**
-    * @tags testInitSession
+    * @tags initSessionByCredentials
     */
-   public function testInitSession() {
+   public function initSessionByCredentials() {
       $client = $this->newTestedInstance(GLPI_URL, $this->httpClient);
 
       // Test invalid credentials
@@ -62,11 +62,23 @@ class Client extends BaseTestCase {
       // Test valid credentials
       $success = $client->initSessionByCredentials('glpi', 'glpi');
       $this->boolean($success)->isTrue();
+   }
+
+   /**
+    * @tags initSessionByUserToken
+    */
+   public function initSessionByUserToken() {
+      $client = $this->newTestedInstance(GLPI_URL, $this->httpClient);
+
+      // Test invalid credentials for user token
+      $this->exception(function () use ($client) {
+         $client->initSessionByUserToken('');
+      })->hasMessage(ErrorHandler::getMessage('ERROR_LOGIN_PARAMETERS_MISSING'));
 
       // Test invalid credentials for user token
       $this->exception(function () use ($client) {
          $client->initSessionByUserToken('loremIpsum');
-      })->hasMessage(ErrorHandler::getMessage('ERROR_LOGIN_PARAMETERS_MISSING'));
+      })->hasMessage(ErrorHandler::getMessage('ERROR_GLPI_LOGIN_USER_TOKEN'));
 
       // Test valid credentials for user token
       $usertoken = '10r3mIp5umT0k3n';
