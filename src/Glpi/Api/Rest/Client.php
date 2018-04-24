@@ -134,14 +134,15 @@ class Client {
       try {
          $options['headers']['Content-Type'] = "application/json";
          $sessionHeaders = [];
-         if ($apiToken and key_exists('Session-Token', $apiToken)) {
-            $sessionHeaders = ['Session-Token' => $apiToken['Session-Token']];
-         }
-         if (key_exists('App-Token', $apiToken)) {
-            $sessionHeaders['App-Token'] = $apiToken['App-Token'];
+         if ($apiToken) {
+            if (key_exists('Session-Token', $apiToken) && $apiToken['Session-Token']) {
+               $sessionHeaders['Session-Token'] = $apiToken['Session-Token'];
+            }
+            if (key_exists('App-Token', $apiToken) && $apiToken['App-Token']) {
+               $sessionHeaders['App-Token'] = $apiToken['App-Token'];
+            }
          }
          $options = array_merge_recursive($options, ['headers' => $sessionHeaders]);
-         }
          $response = $this->httpClient->request($method, $this->url . $uri, $options);
          return $response;
       } catch (ClientException $e) {

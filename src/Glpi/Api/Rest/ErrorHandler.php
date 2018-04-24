@@ -40,6 +40,7 @@ class ErrorHandler {
       'ERROR_SESSION_TOKEN_INVALID' => "The Session-Token provided in header is invalid. You should redo an Init session request.",
       'ERROR_SESSION_TOKEN_MISSING' => "You miss to provide Session-Token in header of your HTTP request.",
       'ERROR_APP_TOKEN_PARAMETERS_MISSING' => "The current API requires an App-Token header for using its methods.",
+      'ERROR_WRONG_APP_TOKEN_PARAMETER' => "It seems the provided application token doesn't exists in GLPI API configuration.",
       'ERROR_NOT_DELETED' => "You must mark the item for deletion before actually deleting it",
       'ERROR_NOT_ALLOWED_IP' => "We can't find an active client defined in configuration for your IP. Go to the GLPI Configuration > Setup menu and API tab to check IP access.",
       'ERROR_LOGIN_PARAMETERS_MISSING' => "One of theses parameter(s) is missing: login and password or user_token",
