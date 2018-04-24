@@ -36,7 +36,7 @@ layout: coverage
         
                     <td style="text-align: center; width: 100%">
                 <h1 class="text-success">
-                    85%
+                    73%
                                             <small>of 62</small>
                                     </h1>
                 <strong>Lines</strong>
@@ -74,14 +74,14 @@ layout: coverage
             <td><a href="#initSessionByCredentials">Glpi\Api\Rest\Client::initSessionByCredentials()</a></td>
                                         <td style="text-align: center">6</td>
                 <td style="text-align: center">    
-    <span class="label label-success">100%</span>
+    <span class="label label-warning">67%</span>
 </td>
                                             </tr>
             <tr>
             <td><a href="#initSessionByUserToken">Glpi\Api\Rest\Client::initSessionByUserToken()</a></td>
                                         <td style="text-align: center">6</td>
                 <td style="text-align: center">    
-    <span class="label label-success">100%</span>
+    <span class="label label-danger">0%</span>
 </td>
                                             </tr>
             <tr>
@@ -774,7 +774,7 @@ layout: coverage
                     <th id="L80" class="number ">80</th>
 
                     <td class="" id="initSessionByCredentials">
-                        <pre>   public function initSessionByCredentials($user, $password) {<span class="label label-success">100%</span><div class="btn-group"></div></pre>
+                        <pre>   public function initSessionByCredentials($user, $password) {<span class="label label-warning">67%</span><div class="btn-group"></div></pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
@@ -799,16 +799,16 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L84" class="number covered">84</th>
+                    <th id="L84" class="number uncovered">84</th>
 
-                    <td class="covered" >
+                    <td class="uncovered" >
                         <pre>         $body = json_decode($response-&gt;getBody()-&gt;getContents());</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L85" class="number covered">85</th>
+                    <th id="L85" class="number uncovered">85</th>
 
-                    <td class="covered" >
+                    <td class="uncovered" >
                         <pre>         throw new Exception(ErrorHandler::getMessage($body[0]));</pre>
                     </td>
                 </tr>
@@ -918,41 +918,41 @@ layout: coverage
                     <th id="L99" class="number ">99</th>
 
                     <td class="" id="initSessionByUserToken">
-                        <pre>   public function initSessionByUserToken($userToken) {<span class="label label-success">100%</span><div class="btn-group"></div></pre>
+                        <pre>   public function initSessionByUserToken($userToken) {<span class="label label-danger">0%</span><div class="btn-group"></div></pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L100" class="number covered">100</th>
+                    <th id="L100" class="number uncovered">100</th>
 
-                    <td class="covered" >
-                        <pre>      $response = $this-&gt;request(&#039;get&#039;, &#039;initSession&#039;, [&#039;Authorization&#039; =&gt; &quot;user_token $userToken&quot;]);</pre>
+                    <td class="uncovered" >
+                        <pre>      $response = $this-&gt;request(&#039;get&#039;, &#039;initSession&#039;, [&#039;headers&#039; =&gt; [&#039;Authorization&#039; =&gt; &quot;user_token $userToken&quot;]]);</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L101" class="number covered">101</th>
+                    <th id="L101" class="number uncovered">101</th>
 
-                    <td class="covered" >
+                    <td class="uncovered" >
                         <pre>      if ($response-&gt;getStatusCode() != 200</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L102" class="number covered">102</th>
+                    <th id="L102" class="number uncovered">102</th>
 
-                    <td class="covered" >
+                    <td class="uncovered" >
                         <pre>         || !$this-&gt;sessionToken = json_decode($response-&gt;getBody()-&gt;getContents(), true)[&#039;session_token&#039;]) {</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L103" class="number covered">103</th>
+                    <th id="L103" class="number uncovered">103</th>
 
-                    <td class="covered" >
+                    <td class="uncovered" >
                         <pre>         $body = json_decode($response-&gt;getBody()-&gt;getContents());</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L104" class="number covered">104</th>
+                    <th id="L104" class="number uncovered">104</th>
 
-                    <td class="covered" >
+                    <td class="uncovered" >
                         <pre>         throw new Exception(ErrorHandler::getMessage($body[0]));</pre>
                     </td>
                 </tr>
@@ -965,9 +965,9 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L106" class="number covered">106</th>
+                    <th id="L106" class="number uncovered">106</th>
 
-                    <td class="covered" >
+                    <td class="uncovered" >
                         <pre>      return true;</pre>
                     </td>
                 </tr>
