@@ -37,7 +37,7 @@ layout: coverage
                     <td style="text-align: center; width: 100%">
                 <h1 class="text-success">
                     73%
-                                            <small>of 62</small>
+                                            <small>of 64</small>
                                     </h1>
                 <strong>Lines</strong>
             </td>
@@ -93,9 +93,9 @@ layout: coverage
                                             </tr>
             <tr>
             <td><a href="#request">Glpi\Api\Rest\Client::request()</a></td>
-                                        <td style="text-align: center">17</td>
+                                        <td style="text-align: center">19</td>
                 <td style="text-align: center">    
-    <span class="label label-warning">65%</span>
+    <span class="label label-warning">68%</span>
 </td>
                                             </tr>
             <tr>
@@ -1167,7 +1167,7 @@ layout: coverage
                     <th id="L132" class="number ">132</th>
 
                     <td class="" id="request">
-                        <pre>   public function request($method, $uri, array $options = []) {<span class="label label-warning">65%</span><div class="btn-group"></div></pre>
+                        <pre>   public function request($method, $uri, array $options = []) {<span class="label label-warning">68%</span><div class="btn-group"></div></pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
@@ -1196,28 +1196,28 @@ layout: coverage
                     <th id="L136" class="number covered">136</th>
 
                     <td class="covered" >
-                        <pre>         if ($apiToken) {</pre>
+                        <pre>         $sessionHeaders = [];</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
                     <th id="L137" class="number covered">137</th>
 
                     <td class="covered" >
-                        <pre>            $sessionHeaders = [&#039;Session-Token&#039; =&gt; $apiToken[&#039;Session-Token&#039;]];</pre>
+                        <pre>         if ($apiToken) {</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
                     <th id="L138" class="number covered">138</th>
 
                     <td class="covered" >
-                        <pre>            if (key_exists(&#039;App-Token&#039;, $apiToken)) {</pre>
+                        <pre>            if (key_exists(&#039;Session-Token&#039;, $apiToken) &amp;&amp; $apiToken[&#039;Session-Token&#039;]) {</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L139" class="number uncovered">139</th>
+                    <th id="L139" class="number covered">139</th>
 
-                    <td class="uncovered" >
-                        <pre>               $sessionHeaders[&#039;App-Token&#039;] = $apiToken[&#039;App-Token&#039;];</pre>
+                    <td class="covered" >
+                        <pre>               $sessionHeaders[&#039;Session-Token&#039;] = $apiToken[&#039;Session-Token&#039;];</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
@@ -1232,11 +1232,26 @@ layout: coverage
                     <th id="L141" class="number covered">141</th>
 
                     <td class="covered" >
-                        <pre>            $options = array_merge_recursive($options, [&#039;headers&#039; =&gt; $sessionHeaders]);</pre>
+                        <pre>            if (key_exists(&#039;App-Token&#039;, $apiToken) &amp;&amp; $apiToken[&#039;App-Token&#039;]) {</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L142" class="number ">142</th>
+                    <th id="L142" class="number uncovered">142</th>
+
+                    <td class="uncovered" >
+                        <pre>               $sessionHeaders[&#039;App-Token&#039;] = $apiToken[&#039;App-Token&#039;];</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L143" class="number ">143</th>
+
+                    <td class="" >
+                        <pre>            }
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L144" class="number ">144</th>
 
                     <td class="" >
                         <pre>         }
@@ -1244,35 +1259,42 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L143" class="number covered">143</th>
-
-                    <td class="covered" >
-                        <pre>         $response = $this-&gt;httpClient-&gt;request($method, $this-&gt;url . $uri, $options);</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L144" class="number covered">144</th>
-
-                    <td class="covered" >
-                        <pre>         return $response;</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
                     <th id="L145" class="number covered">145</th>
 
                     <td class="covered" >
-                        <pre>      } catch (ClientException $e) {</pre>
+                        <pre>         $options = array_merge_recursive($options, [&#039;headers&#039; =&gt; $sessionHeaders]);</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
                     <th id="L146" class="number covered">146</th>
 
                     <td class="covered" >
+                        <pre>         $response = $this-&gt;httpClient-&gt;request($method, $this-&gt;url . $uri, $options);</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L147" class="number covered">147</th>
+
+                    <td class="covered" >
+                        <pre>         return $response;</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L148" class="number covered">148</th>
+
+                    <td class="covered" >
+                        <pre>      } catch (ClientException $e) {</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L149" class="number covered">149</th>
+
+                    <td class="covered" >
                         <pre>         $response = $e-&gt;getResponse();</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L147" class="number ">147</th>
+                    <th id="L150" class="number ">150</th>
 
                     <td class="" >
                         <pre>         /*$body = $response-&gt;getBody()-&gt;getContents();
@@ -1280,7 +1302,7 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L148" class="number ">148</th>
+                    <th id="L151" class="number ">151</th>
 
                     <td class="" >
                         <pre>         $reasonPhrase = $response-&gt;getReasonPhrase() . (($body) ? &#039; &#039; . $body : &#039;&#039;);*/
@@ -1288,49 +1310,49 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L149" class="number covered">149</th>
+                    <th id="L152" class="number covered">152</th>
 
                     <td class="covered" >
                         <pre>         return $response;</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L150" class="number uncovered">150</th>
+                    <th id="L153" class="number uncovered">153</th>
 
                     <td class="uncovered" >
                         <pre>      } catch (RequestException $e) {</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L151" class="number uncovered">151</th>
+                    <th id="L154" class="number uncovered">154</th>
 
                     <td class="uncovered" >
                         <pre>         $hasResponse = $e-&gt;hasResponse();</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L152" class="number uncovered">152</th>
+                    <th id="L155" class="number uncovered">155</th>
 
                     <td class="uncovered" >
                         <pre>         $statusCode = ($hasResponse) ? $e-&gt;getResponse()-&gt;getStatusCode() : &#039;500&#039;;</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L153" class="number uncovered">153</th>
+                    <th id="L156" class="number uncovered">156</th>
 
                     <td class="uncovered" >
                         <pre>         $contents = ($hasResponse) ? $e-&gt;getResponse()-&gt;getReasonPhrase() : &#039;Request Error&#039;;</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L154" class="number uncovered">154</th>
+                    <th id="L157" class="number uncovered">157</th>
 
                     <td class="uncovered" >
                         <pre>         throw new Exception($contents, $statusCode);</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L155" class="number ">155</th>
+                    <th id="L158" class="number ">158</th>
 
                     <td class="" >
                         <pre>      }
@@ -1338,41 +1360,17 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L156" class="number unreach">156</th>
+                    <th id="L159" class="number unreach">159</th>
 
                     <td class="unreach" >
                         <pre>   }</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L157" class="number ">157</th>
-
-                    <td class="" >
-                        <pre>
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L158" class="number ">158</th>
-
-                    <td class="" >
-                        <pre>   /**
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L159" class="number ">159</th>
-
-                    <td class="" >
-                        <pre>    * Return the current php $_SESSION.
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
                     <th id="L160" class="number ">160</th>
 
                     <td class="" >
-                        <pre>    * @return array
+                        <pre>
 </pre>
                     </td>
                 </tr>
@@ -1380,64 +1378,20 @@ layout: coverage
                     <th id="L161" class="number ">161</th>
 
                     <td class="" >
-                        <pre>    */
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="getFullSession">
-                    <th id="L162" class="number ">162</th>
-
-                    <td class="" id="getFullSession">
-                        <pre>   public function getFullSession() {<span class="label label-success">100%</span><div class="btn-group"></div></pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L163" class="number covered">163</th>
-
-                    <td class="covered" >
-                        <pre>      $response = $this-&gt;request(&#039;get&#039;, &#039;getFullSession&#039;);</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L164" class="number covered">164</th>
-
-                    <td class="covered" >
-                        <pre>      return [&#039;statusCode&#039; =&gt; $response-&gt;getStatusCode(), &#039;body&#039; =&gt; $response-&gt;getBody()-&gt;getContents()];</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L165" class="number unreach">165</th>
-
-                    <td class="unreach" >
-                        <pre>   }</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L166" class="number ">166</th>
-
-                    <td class="" >
-                        <pre>
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L167" class="number ">167</th>
-
-                    <td class="" >
                         <pre>   /**
 </pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L168" class="number ">168</th>
+                    <th id="L162" class="number ">162</th>
 
                     <td class="" >
-                        <pre>    * Return the current $CFG_GLPI.
+                        <pre>    * Return the current php $_SESSION.
 </pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L169" class="number ">169</th>
+                    <th id="L163" class="number ">163</th>
 
                     <td class="" >
                         <pre>    * @return array
@@ -1445,43 +1399,43 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L170" class="number ">170</th>
+                    <th id="L164" class="number ">164</th>
 
                     <td class="" >
                         <pre>    */
 </pre>
                     </td>
                 </tr>
-                            <tr class="line" id="getGlpiConfig">
-                    <th id="L171" class="number ">171</th>
+                            <tr class="line" id="getFullSession">
+                    <th id="L165" class="number ">165</th>
 
-                    <td class="" id="getGlpiConfig">
-                        <pre>   public function getGlpiConfig() {<span class="label label-success">100%</span><div class="btn-group"></div></pre>
+                    <td class="" id="getFullSession">
+                        <pre>   public function getFullSession() {<span class="label label-success">100%</span><div class="btn-group"></div></pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L172" class="number covered">172</th>
+                    <th id="L166" class="number covered">166</th>
 
                     <td class="covered" >
-                        <pre>      $response = $this-&gt;request(&#039;get&#039;, &#039;getGlpiConfig&#039;);</pre>
+                        <pre>      $response = $this-&gt;request(&#039;get&#039;, &#039;getFullSession&#039;);</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L173" class="number covered">173</th>
+                    <th id="L167" class="number covered">167</th>
 
                     <td class="covered" >
                         <pre>      return [&#039;statusCode&#039; =&gt; $response-&gt;getStatusCode(), &#039;body&#039; =&gt; $response-&gt;getBody()-&gt;getContents()];</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L174" class="number unreach">174</th>
+                    <th id="L168" class="number unreach">168</th>
 
                     <td class="unreach" >
                         <pre>   }</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L175" class="number ">175</th>
+                    <th id="L169" class="number ">169</th>
 
                     <td class="" >
                         <pre>
@@ -1489,7 +1443,7 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L176" class="number ">176</th>
+                    <th id="L170" class="number ">170</th>
 
                     <td class="" >
                         <pre>   /**
@@ -1497,18 +1451,62 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L177" class="number ">177</th>
+                    <th id="L171" class="number ">171</th>
 
                     <td class="" >
-                        <pre>    * generate headers containing session and app tokens for Http client object
+                        <pre>    * Return the current $CFG_GLPI.
 </pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L172" class="number ">172</th>
+
+                    <td class="" >
+                        <pre>    * @return array
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L173" class="number ">173</th>
+
+                    <td class="" >
+                        <pre>    */
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="getGlpiConfig">
+                    <th id="L174" class="number ">174</th>
+
+                    <td class="" id="getGlpiConfig">
+                        <pre>   public function getGlpiConfig() {<span class="label label-success">100%</span><div class="btn-group"></div></pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L175" class="number covered">175</th>
+
+                    <td class="covered" >
+                        <pre>      $response = $this-&gt;request(&#039;get&#039;, &#039;getGlpiConfig&#039;);</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L176" class="number covered">176</th>
+
+                    <td class="covered" >
+                        <pre>      return [&#039;statusCode&#039; =&gt; $response-&gt;getStatusCode(), &#039;body&#039; =&gt; $response-&gt;getBody()-&gt;getContents()];</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L177" class="number unreach">177</th>
+
+                    <td class="unreach" >
+                        <pre>   }</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
                     <th id="L178" class="number ">178</th>
 
                     <td class="" >
-                        <pre>    *
+                        <pre>
 </pre>
                     </td>
                 </tr>
@@ -1516,7 +1514,7 @@ layout: coverage
                     <th id="L179" class="number ">179</th>
 
                     <td class="" >
-                        <pre>    * @return string[]
+                        <pre>   /**
 </pre>
                     </td>
                 </tr>
@@ -1524,58 +1522,60 @@ layout: coverage
                     <th id="L180" class="number ">180</th>
 
                     <td class="" >
+                        <pre>    * generate headers containing session and app tokens for Http client object
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L181" class="number ">181</th>
+
+                    <td class="" >
+                        <pre>    *
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L182" class="number ">182</th>
+
+                    <td class="" >
+                        <pre>    * @return string[]
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L183" class="number ">183</th>
+
+                    <td class="" >
                         <pre>    */
 </pre>
                     </td>
                 </tr>
                             <tr class="line" id="addTokens">
-                    <th id="L181" class="number ">181</th>
+                    <th id="L184" class="number ">184</th>
 
                     <td class="" id="addTokens">
                         <pre>   private function addTokens() {<span class="label label-success">83%</span><div class="btn-group"></div></pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L182" class="number covered">182</th>
+                    <th id="L185" class="number covered">185</th>
 
                     <td class="covered" >
                         <pre>      $headers = [];</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L183" class="number covered">183</th>
+                    <th id="L186" class="number covered">186</th>
 
                     <td class="covered" >
                         <pre>      if ($this-&gt;appToken !== null) {</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L184" class="number uncovered">184</th>
+                    <th id="L187" class="number uncovered">187</th>
 
                     <td class="uncovered" >
                         <pre>         $headers[&#039;App-Token&#039;] = $this-&gt;appToken;</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L185" class="number ">185</th>
-
-                    <td class="" >
-                        <pre>      }
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L186" class="number covered">186</th>
-
-                    <td class="covered" >
-                        <pre>      if ($this-&gt;sessionToken !== null) {</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L187" class="number covered">187</th>
-
-                    <td class="covered" >
-                        <pre>         $headers[&#039;Session-Token&#039;] = $this-&gt;sessionToken;</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
@@ -1587,25 +1587,25 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L189" class="number ">189</th>
+                    <th id="L189" class="number covered">189</th>
 
-                    <td class="" >
-                        <pre>
-</pre>
+                    <td class="covered" >
+                        <pre>      if ($this-&gt;sessionToken !== null) {</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
                     <th id="L190" class="number covered">190</th>
 
                     <td class="covered" >
-                        <pre>      return $headers;</pre>
+                        <pre>         $headers[&#039;Session-Token&#039;] = $this-&gt;sessionToken;</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L191" class="number unreach">191</th>
+                    <th id="L191" class="number ">191</th>
 
-                    <td class="unreach" >
-                        <pre>   }</pre>
+                    <td class="" >
+                        <pre>      }
+</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
@@ -1617,137 +1617,21 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L193" class="number ">193</th>
-
-                    <td class="" >
-                        <pre>   /**
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L194" class="number ">194</th>
-
-                    <td class="" >
-                        <pre>    * Allows to request password recovery.
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L195" class="number ">195</th>
-
-                    <td class="" >
-                        <pre>    * This endpoint works under the following conditions:
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L196" class="number ">196</th>
-
-                    <td class="" >
-                        <pre>    *  - GLPI has notifications enabled
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L197" class="number ">197</th>
-
-                    <td class="" >
-                        <pre>    *  - The email address of the user belongs to a user account.
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L198" class="number ">198</th>
-
-                    <td class="" >
-                        <pre>    *
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L199" class="number ">199</th>
-
-                    <td class="" >
-                        <pre>    * @param string $email
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L200" class="number ">200</th>
-
-                    <td class="" >
-                        <pre>    * @return array
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L201" class="number ">201</th>
-
-                    <td class="" >
-                        <pre>    */
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="recoveryPassword">
-                    <th id="L202" class="number ">202</th>
-
-                    <td class="" id="recoveryPassword">
-                        <pre>   public function recoveryPassword($email) {<span class="label label-success">100%</span><div class="btn-group"></div></pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L203" class="number covered">203</th>
+                    <th id="L193" class="number covered">193</th>
 
                     <td class="covered" >
-                        <pre>      $options[&#039;body&#039;] = json_encode($params[&#039;email&#039;] = $email);</pre>
+                        <pre>      return $headers;</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L204" class="number covered">204</th>
-
-                    <td class="covered" >
-                        <pre>      $response = $this-&gt;request(&#039;put&#039;, &#039;lostPassword&#039;, $options);</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L205" class="number ">205</th>
-
-                    <td class="" >
-                        <pre>      return [
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L206" class="number covered">206</th>
-
-                    <td class="covered" >
-                        <pre>         &#039;statusCode&#039; =&gt; $response-&gt;getStatusCode(),</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L207" class="number covered">207</th>
-
-                    <td class="covered" >
-                        <pre>         &#039;body&#039; =&gt; $response-&gt;getBody()-&gt;getContents(),</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L208" class="number ">208</th>
-
-                    <td class="" >
-                        <pre>      ];
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L209" class="number unreach">209</th>
+                    <th id="L194" class="number unreach">194</th>
 
                     <td class="unreach" >
                         <pre>   }</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L210" class="number ">210</th>
+                    <th id="L195" class="number ">195</th>
 
                     <td class="" >
                         <pre>
@@ -1755,7 +1639,7 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L211" class="number ">211</th>
+                    <th id="L196" class="number ">196</th>
 
                     <td class="" >
                         <pre>   /**
@@ -1763,15 +1647,15 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L212" class="number ">212</th>
+                    <th id="L197" class="number ">197</th>
 
                     <td class="" >
-                        <pre>    * Allows to request a password reset.
+                        <pre>    * Allows to request password recovery.
 </pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L213" class="number ">213</th>
+                    <th id="L198" class="number ">198</th>
 
                     <td class="" >
                         <pre>    * This endpoint works under the following conditions:
@@ -1779,7 +1663,7 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L214" class="number ">214</th>
+                    <th id="L199" class="number ">199</th>
 
                     <td class="" >
                         <pre>    *  - GLPI has notifications enabled
@@ -1787,7 +1671,7 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L215" class="number ">215</th>
+                    <th id="L200" class="number ">200</th>
 
                     <td class="" >
                         <pre>    *  - The email address of the user belongs to a user account.
@@ -1795,7 +1679,7 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L216" class="number ">216</th>
+                    <th id="L201" class="number ">201</th>
 
                     <td class="" >
                         <pre>    *
@@ -1803,31 +1687,15 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L217" class="number ">217</th>
+                    <th id="L202" class="number ">202</th>
 
                     <td class="" >
-                        <pre>    * @param $email
+                        <pre>    * @param string $email
 </pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L218" class="number ">218</th>
-
-                    <td class="" >
-                        <pre>    * @param string $recoveryToken
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L219" class="number ">219</th>
-
-                    <td class="" >
-                        <pre>    * @param string $newPassword
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L220" class="number ">220</th>
+                    <th id="L203" class="number ">203</th>
 
                     <td class="" >
                         <pre>    * @return array
@@ -1835,87 +1703,36 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L221" class="number ">221</th>
+                    <th id="L204" class="number ">204</th>
 
                     <td class="" >
                         <pre>    */
 </pre>
                     </td>
                 </tr>
-                            <tr class="line" id="resetPassword">
-                    <th id="L222" class="number ">222</th>
+                            <tr class="line" id="recoveryPassword">
+                    <th id="L205" class="number ">205</th>
 
-                    <td class="" id="resetPassword">
-                        <pre>   public function resetPassword($email, $recoveryToken, $newPassword) {<span class="label label-success">100%</span><div class="btn-group"></div></pre>
+                    <td class="" id="recoveryPassword">
+                        <pre>   public function recoveryPassword($email) {<span class="label label-success">100%</span><div class="btn-group"></div></pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L223" class="number covered">223</th>
-
-                    <td class="covered" >
-                        <pre>      if (($recoveryToken &amp;&amp; !$newPassword) || (!$recoveryToken &amp;&amp; $newPassword)) {</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L224" class="number covered">224</th>
+                    <th id="L206" class="number covered">206</th>
 
                     <td class="covered" >
-                        <pre>         throw new InsufficientArgumentsException(ErrorHandler::getMessage(&#039;ERROR_APILIB_ARGUMENTS&#039;));</pre>
+                        <pre>      $options[&#039;body&#039;] = json_encode($params[&#039;email&#039;] = $email);</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L225" class="number ">225</th>
-
-                    <td class="" >
-                        <pre>      }
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L226" class="number covered">226</th>
-
-                    <td class="covered" >
-                        <pre>      $options[&#039;body&#039;] = json_encode([</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L227" class="number covered">227</th>
-
-                    <td class="covered" >
-                        <pre>         &#039;email&#039; =&gt; $email,</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L228" class="number covered">228</th>
-
-                    <td class="covered" >
-                        <pre>         &#039;password_forget_token&#039; =&gt; $recoveryToken,</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L229" class="number covered">229</th>
-
-                    <td class="covered" >
-                        <pre>         &#039;password&#039; =&gt; $newPassword,</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L230" class="number ">230</th>
-
-                    <td class="" >
-                        <pre>      ]);
-</pre>
-                    </td>
-                </tr>
-                            <tr class="line" id="">
-                    <th id="L231" class="number covered">231</th>
+                    <th id="L207" class="number covered">207</th>
 
                     <td class="covered" >
                         <pre>      $response = $this-&gt;request(&#039;put&#039;, &#039;lostPassword&#039;, $options);</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L232" class="number ">232</th>
+                    <th id="L208" class="number ">208</th>
 
                     <td class="" >
                         <pre>      return [
@@ -1923,21 +1740,21 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L233" class="number covered">233</th>
+                    <th id="L209" class="number covered">209</th>
 
                     <td class="covered" >
                         <pre>         &#039;statusCode&#039; =&gt; $response-&gt;getStatusCode(),</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L234" class="number covered">234</th>
+                    <th id="L210" class="number covered">210</th>
 
                     <td class="covered" >
                         <pre>         &#039;body&#039; =&gt; $response-&gt;getBody()-&gt;getContents(),</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L235" class="number ">235</th>
+                    <th id="L211" class="number ">211</th>
 
                     <td class="" >
                         <pre>      ];
@@ -1945,14 +1762,219 @@ layout: coverage
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L236" class="number unreach">236</th>
+                    <th id="L212" class="number unreach">212</th>
 
                     <td class="unreach" >
                         <pre>   }</pre>
                     </td>
                 </tr>
                             <tr class="line" id="">
-                    <th id="L237" class="number ">237</th>
+                    <th id="L213" class="number ">213</th>
+
+                    <td class="" >
+                        <pre>
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L214" class="number ">214</th>
+
+                    <td class="" >
+                        <pre>   /**
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L215" class="number ">215</th>
+
+                    <td class="" >
+                        <pre>    * Allows to request a password reset.
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L216" class="number ">216</th>
+
+                    <td class="" >
+                        <pre>    * This endpoint works under the following conditions:
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L217" class="number ">217</th>
+
+                    <td class="" >
+                        <pre>    *  - GLPI has notifications enabled
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L218" class="number ">218</th>
+
+                    <td class="" >
+                        <pre>    *  - The email address of the user belongs to a user account.
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L219" class="number ">219</th>
+
+                    <td class="" >
+                        <pre>    *
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L220" class="number ">220</th>
+
+                    <td class="" >
+                        <pre>    * @param $email
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L221" class="number ">221</th>
+
+                    <td class="" >
+                        <pre>    * @param string $recoveryToken
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L222" class="number ">222</th>
+
+                    <td class="" >
+                        <pre>    * @param string $newPassword
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L223" class="number ">223</th>
+
+                    <td class="" >
+                        <pre>    * @return array
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L224" class="number ">224</th>
+
+                    <td class="" >
+                        <pre>    */
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="resetPassword">
+                    <th id="L225" class="number ">225</th>
+
+                    <td class="" id="resetPassword">
+                        <pre>   public function resetPassword($email, $recoveryToken, $newPassword) {<span class="label label-success">100%</span><div class="btn-group"></div></pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L226" class="number covered">226</th>
+
+                    <td class="covered" >
+                        <pre>      if (($recoveryToken &amp;&amp; !$newPassword) || (!$recoveryToken &amp;&amp; $newPassword)) {</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L227" class="number covered">227</th>
+
+                    <td class="covered" >
+                        <pre>         throw new InsufficientArgumentsException(ErrorHandler::getMessage(&#039;ERROR_APILIB_ARGUMENTS&#039;));</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L228" class="number ">228</th>
+
+                    <td class="" >
+                        <pre>      }
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L229" class="number covered">229</th>
+
+                    <td class="covered" >
+                        <pre>      $options[&#039;body&#039;] = json_encode([</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L230" class="number covered">230</th>
+
+                    <td class="covered" >
+                        <pre>         &#039;email&#039; =&gt; $email,</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L231" class="number covered">231</th>
+
+                    <td class="covered" >
+                        <pre>         &#039;password_forget_token&#039; =&gt; $recoveryToken,</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L232" class="number covered">232</th>
+
+                    <td class="covered" >
+                        <pre>         &#039;password&#039; =&gt; $newPassword,</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L233" class="number ">233</th>
+
+                    <td class="" >
+                        <pre>      ]);
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L234" class="number covered">234</th>
+
+                    <td class="covered" >
+                        <pre>      $response = $this-&gt;request(&#039;put&#039;, &#039;lostPassword&#039;, $options);</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L235" class="number ">235</th>
+
+                    <td class="" >
+                        <pre>      return [
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L236" class="number covered">236</th>
+
+                    <td class="covered" >
+                        <pre>         &#039;statusCode&#039; =&gt; $response-&gt;getStatusCode(),</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L237" class="number covered">237</th>
+
+                    <td class="covered" >
+                        <pre>         &#039;body&#039; =&gt; $response-&gt;getBody()-&gt;getContents(),</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L238" class="number ">238</th>
+
+                    <td class="" >
+                        <pre>      ];
+</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L239" class="number unreach">239</th>
+
+                    <td class="unreach" >
+                        <pre>   }</pre>
+                    </td>
+                </tr>
+                            <tr class="line" id="">
+                    <th id="L240" class="number ">240</th>
 
                     <td class="" >
                         <pre>}
