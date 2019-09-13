@@ -2,6 +2,9 @@ language: php
 git:
   depth: false
 
+services:
+  - mysql
+
 env:
   global:
     - GLPI_URL=http://localhost:8080
@@ -9,9 +12,18 @@ env:
     - GLPI_SOURCE=https://github.com/glpi-project/glpi
     - CS=7.2
   matrix:
-    - GLPI_BRANCH=9.2.1
-    - GLPI_BRANCH=9.2/bugfixes
+    - GLPI_BRANCH=9.4.3
+    - GLPI_BRANCH=9.4/bugfixes
+    - GLPI_BRANCH=9.5/bugfixes
     - GLPI_BRANCH=master
+
+matrix:
+  exclude:
+    - php: 5.6
+      env: GLPI_BRANCH=9.5/bugfixes
+  allow_failures:
+    - php: nightly
+    - env: GLPI_BRANCH=master
 
 before_script:
   # The following line prevents PHP Warning about `$HTTP_RAW_POST_DATA` being deprecated
@@ -21,9 +33,11 @@ before_script:
   # let's clone and config GLPI for the client
   - git clone --depth=1 $GLPI_SOURCE  -b $GLPI_BRANCH $GLPI_ROOT_DIR && cd $GLPI_ROOT_DIR
   - composer install --no-interaction
+  - if [ -e bin/console ] && [ "$GLPI_BRANCH" = "9.5/bugfixes" ] ; then php bin/console dependencies install ; fi
   - mysql -u root -e 'create database glpitest;'
   - if [ -e scripts/cliinstall.php ] ; then php scripts/cliinstall.php --db=glpitest --user=root ; fi
   - if [ -e tools/cliinstall.php ] ; then php tools/cliinstall.php --db=glpitest --user=root ; fi
+  - if [ -e bin/console ]; then php bin/console glpi:database:install --db-host=127.0.0.1 --db-name=glpitest --db-user=root --no-interaction --no-plugins --force; fi
   # start a web server on port 8080, run in the background; wait for initialization
   - php -S localhost:8080 > /dev/null 2>&1 &
   - until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
@@ -43,10 +57,8 @@ php:
   - 7.0
   - 7.1
   - 7.2
+  - 7.3
   - nightly
-
-allow_failures:
-- php: nightly
 
 cache:
   directories:
