@@ -292,7 +292,7 @@ class ItemHandler extends BaseTestCase {
          ->boolean(property_exists($arrayOfStdClass[0], 'id'))->isTrue()
          ->integer($arrayOfStdClass[0]->id)
          ->boolean(property_exists($arrayOfStdClass[0], 'message'))->isTrue()
-         ->string($arrayOfStdClass[0]->message)->isEmpty();
+         ->string($arrayOfStdClass[0]->message)->isEqualTo("Item successfully added: add-me-1");
       $this->given($response)
          ->boolean(key_exists('location', $response))->isTrue()
          ->variable($response['location'])->isNull()
