@@ -70,6 +70,10 @@ class Client {
       $this->appToken = $appToken;
    }
 
+   public function getSessionToken() {
+      return $this->sessionToken;
+   }
+
    /**
     * Initialize a session with user credentials
     * @param string $user

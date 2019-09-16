@@ -90,6 +90,21 @@ class Client extends BaseTestCase {
       $this->boolean($success)->isTrue();
    }
 
+   public function testGetSessionToken() {
+      $client = $this->newTestedInstance(GLPI_URL, $this->httpClient);
+
+      // Test invalid credentials
+      $this->exception(function () use ($client) {
+         $client->initSessionByCredentials('glpi', 'bad password');
+      })->hasMessage(ErrorHandler::getMessage('ERROR_GLPI_LOGIN'));
+      $this->variable($client->getSessionToken())->isNull();
+
+      // Test valid credentials
+      $success = $client->initSessionByCredentials('glpi', 'glpi');
+      $this->boolean($success)->isTrue();
+      $this->string($client->getSessionToken())->isNotEmpty();
+   }
+
    /**
     * @tags testGetFullSession
     */
