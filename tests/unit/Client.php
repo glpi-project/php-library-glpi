@@ -240,4 +240,45 @@ class Client extends BaseTestCase {
          ->string(json_decode($contents)[1])->isEqualTo($errors['ERROR_API_DISABLED'][1]);
    }
 
+   public function testSetSessionToken() {
+      $client = $this->newTestedInstance(GLPI_URL, new \GuzzleHttp\Client());
+
+      $client->setSessionToken('foo');
+      $this->string($client->getSessionToken())->isEqualTo('foo');
+   }
+
+   public function testGetActiveProfile() {
+      $bodies = [ 
+         'success' => [
+            'active_profile' => 
+            [
+              'id' => 11,
+              'name' => 'Limited Profile',
+              'interface' => 'central',
+              'is_default' => 0,
+              'helpdesk_hardware' => 0,
+              'helpdesk_item_type' => 
+              [],
+              'entities' => 
+              [
+                6 => 
+                [
+                  'id' => 6,
+                  'name' => 'foo',
+                  'is_recursive' => 0,
+                ],
+             ],
+            ],
+         ],
+      ];
+      $httpClient = $this->mockedHttpClient([
+         $this->mockedResponse(parent::HTTP_OK,
+            $bodies['success']),
+      ]);
+
+      $client = $this->newTestedInstance(GLPI_URL, $httpClient);
+      $response = $client->getActiveProfile();
+      //$this->assertJsonResponse($response, parent::HTTP_OK);
+      $this->array(json_decode($response['body'], true))->isIdenticalTo($bodies['success']);
+   }
 }
