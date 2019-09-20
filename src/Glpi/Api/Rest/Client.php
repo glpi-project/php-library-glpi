@@ -253,4 +253,14 @@ class Client {
          'body' => $response->getBody()->getContents(),
       ];
    }
+
+   /**
+    * Get active profile
+    *
+    * @return array
+    */
+   public function getActiveProfile() {
+      $response = $this->request('get', 'getActiveProfile');
+      return ['statusCode' => $response->getStatusCode(), 'body' => $response->getBody()->getContents()];
+   }
 }
