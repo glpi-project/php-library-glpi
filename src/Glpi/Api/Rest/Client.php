@@ -74,6 +74,10 @@ class Client {
       return $this->sessionToken;
    }
 
+   public function setSessionToken($token) {
+      $this->sessionToken = $token;
+   }
+
    /**
     * Initialize a session with user credentials
     * @param string $user
