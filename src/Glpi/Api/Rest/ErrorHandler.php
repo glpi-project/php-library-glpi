@@ -57,8 +57,9 @@ class ErrorHandler {
       'ERROR_GLPI_DELETE' => "We cannot delete the object to GLPI. This error is not relative to API but to GLPI core. Check the GLPI logs files (in files/_logs directory).",
       'ERROR_GLPI_PARTIAL_DELETE' => "Some of the objects you want to delete triggers an error, maybe a missing field or rights. You'll find with this error, a collection of results.",
       'ERROR_RESOURCE_NOT_FOUND_NOR_COMMONDBTM' => "Resource not found or not an instance of CommonDBTM",
-      'ERROR_APILIB_ARGUMENTS' => "Missing o wrong argument(s) for this function, please check GLPI API and function documentation.",
+      'ERROR_APILIB_ARGUMENTS' => "Missing or wrong argument(s) for this function, please check GLPI API and function documentation.",
       'ERROR_APILIB_ARGS_MANDATORY' => "Missing mandatory param(s) %s.",
+      'ERROR' => 'API on remote GLPI is disabled.',
    ];
 
    /**
