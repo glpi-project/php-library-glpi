@@ -51,6 +51,9 @@ class Client {
    /** @var string Session token obtained after initSession() */
    private $sessionToken = null;
 
+   /** integer ID of the logged in user */
+   private $loginUserId = null;
+
    /**
     * Client constructor.
     * @param string $url
@@ -79,6 +82,21 @@ class Client {
    }
 
    /**
+    * Get the ID of the currently logged in user
+    *
+    * @return null|integer
+    */
+   public function getSessionUserId() {
+      if ($this->sessionToken === null) {
+         return null;
+      }
+      if ($this->loginUserId === null) {
+         $this->getFullSession();
+      }
+      return $this->loginUserId;
+   }
+
+   /**
     * Initialize a session with user credentials
     * @param string $user
     * @param string $password
@@ -87,11 +105,14 @@ class Client {
     */
    public function initSessionByCredentials($user, $password) {
       $response = $this->request('get', 'initSession', ['auth' => [$user, $password]]);
-      $body = $response->getBody()->getContents();
+      $body = json_decode($response->getBody()->getContents(), true);
       if ($response->getStatusCode() != 200
-         || !$this->sessionToken = json_decode($body, true)['session_token']) {
-         $body = json_decode($body);
+         || !$this->sessionToken = $body['session_token']) {
          throw new Exception(ErrorHandler::getMessage($body[0]));
+      }
+      if (isset($body['users_id'])) {
+         // When support for GLPI 9.4 is dropped, the if() becomes useless
+         $this->loginUserId = (int) $body['users_id'];
       }
       return true;
    }
@@ -115,11 +136,14 @@ class Client {
             ],
          ]
       );
-      $body = $response->getBody()->getContents();
+      $body = json_decode($response->getBody()->getContents(), true);
       if ($response->getStatusCode() != 200
-         || !$this->sessionToken = json_decode($body, true)['session_token']) {
-         $body = json_decode($body);
+         || !$this->sessionToken = $body['session_token']) {
          throw new Exception(ErrorHandler::getMessage($body[0]));
+      }
+      if (isset($body['users_id'])) {
+         // When support for GLPI 9.4 is dropped, the if() becomes useless
+         $this->loginUserId = (int) $body['users_id'];
       }
       return true;
    }
@@ -135,6 +159,7 @@ class Client {
          $body = json_decode($response->getBody()->getContents());
          throw new Exception(ErrorHandler::getMessage($body[0]));
       }
+      $this->loginUserId = null;
       return true;
    }
 
@@ -182,7 +207,14 @@ class Client {
     */
    public function getFullSession() {
       $response = $this->request('get', 'getFullSession');
-      return ['statusCode' => $response->getStatusCode(), 'body' => $response->getBody()->getContents()];
+      $response = [
+         'statusCode' => $response->getStatusCode(), 
+         'body' => $response->getBody()->getContents()
+      ];
+      if ($this->loginUserId === null && $response['statusCode'] === 200) {
+         $this->loginUserId = (int) json_decode($response['body'], true)['session']['glpiID'];
+      }
+      return $response;
    }
 
    /**
