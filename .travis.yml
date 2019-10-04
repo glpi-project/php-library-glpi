@@ -21,6 +21,8 @@ matrix:
   exclude:
     - php: 5.6
       env: GLPI_BRANCH=9.5/bugfixes
+    - php: 5.6
+      env: GLPI_BRANCH=master
   allow_failures:
     - php: nightly
     - env: GLPI_BRANCH=master
